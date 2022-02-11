@@ -8,7 +8,7 @@ slp = 0.55
 cycle = 0
 
 
-s.effectorMovement(-200, 200, 60, 0)
+s.effectorMovement(-200, 400, 60, 0)
 s.coordinateRequest()
 time.sleep(slp)
 

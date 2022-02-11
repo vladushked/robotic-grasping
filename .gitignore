@@ -106,6 +106,4 @@ venv.bak/
 
 results/
 
-saved_data/
-
 *.pyc

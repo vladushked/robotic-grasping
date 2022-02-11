@@ -38,7 +38,7 @@ class Calibration:
         # self.move_completed = os.path.join(homedir, "move_completed.npy")
         # self.tool_position = os.path.join(homedir, "tool_position.npy")
 
-        # self.s = RAS_Connect('/dev/ttyTHS0')
+        self.s = RAS_Connect('/dev/ttyTHS0')
 
     @staticmethod
     def _get_rigid_transform(A, B):
@@ -135,7 +135,7 @@ class Calibration:
             print('Requesting move to tool position: ', tool_position)
 
             print(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 0)
-            # self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 0)
+            self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 0)
             # self.s.coordinateRequest()
 
             # np.save(self.tool_position, tool_position)
@@ -143,20 +143,21 @@ class Calibration:
             # while not np.load(self.move_completed):
                 # time.sleep(0.1)
             # Wait for robot to be stable
-            time.sleep(0.5)
+            time.sleep(2)
 
             # Find checkerboard center
             checkerboard_size = (3, 3)
             refine_criteria = (cv2.TERM_CRITERIA_EPS +
                                cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-            image_bundle = self.camera.get_image_bundle()
-            camera_color_img = image_bundle['rgb']
-            camera_depth_img = image_bundle['aligned_depth']
-            bgr_color_data = cv2.cvtColor(camera_color_img, cv2.COLOR_RGB2BGR)
-            gray_data = cv2.cvtColor(bgr_color_data, cv2.COLOR_RGB2GRAY)
+            
             
             checkerboard_found = False
             while checkerboard_found == False:
+                image_bundle = self.camera.get_image_bundle()
+                camera_color_img = image_bundle['rgb']
+                camera_depth_img = image_bundle['aligned_depth']
+                bgr_color_data = cv2.cvtColor(camera_color_img, cv2.COLOR_RGB2BGR)
+                gray_data = cv2.cvtColor(bgr_color_data, cv2.COLOR_RGB2GRAY)
                 checkerboard_found, corners = cv2.findChessboardCorners(gray_data, checkerboard_size, None,
                                                                     cv2.CALIB_CB_ADAPTIVE_THRESH)
                 if checkerboard_found:
