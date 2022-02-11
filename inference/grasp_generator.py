@@ -97,10 +97,12 @@ class GraspGenerator:
             plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, save=True)
 
     def run(self):
+        np.save(self.grasp_request, 1)
         while True:
             if np.load(self.grasp_request):
                 self.generate()
-                np.save(self.grasp_request, 0)
+                np.save(self.grasp_request, 1)
                 np.save(self.grasp_available, 1)
+                time.sleep(1)
             else:
                 time.sleep(0.1)

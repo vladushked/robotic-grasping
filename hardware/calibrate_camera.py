@@ -91,14 +91,14 @@ class Calibration:
         :return calibration grid points
         """
         gridspace_x = np.linspace(self.workspace_limits[0][0], self.workspace_limits[0][1],
-                                  1 + (self.workspace_limits[0][1] - self.workspace_limits[0][
-                                      0]) / self.calib_grid_step)
+                                  1 + int((self.workspace_limits[0][1] - self.workspace_limits[0][
+                                      0]) / self.calib_grid_step))
         gridspace_y = np.linspace(self.workspace_limits[1][0], self.workspace_limits[1][1],
-                                  1 + (self.workspace_limits[1][1] - self.workspace_limits[1][
-                                      0]) / self.calib_grid_step)
+                                  1 + int((self.workspace_limits[1][1] - self.workspace_limits[1][
+                                      0]) / self.calib_grid_step))
         gridspace_z = np.linspace(self.workspace_limits[2][0], self.workspace_limits[2][1],
-                                  1 + (self.workspace_limits[2][1] - self.workspace_limits[2][
-                                      0]) / self.calib_grid_step)
+                                  1 + int((self.workspace_limits[2][1] - self.workspace_limits[2][
+                                      0]) / self.calib_grid_step))
         calib_grid_x, calib_grid_y, calib_grid_z = np.meshgrid(gridspace_x, gridspace_y, gridspace_z)
         num_calib_grid_pts = calib_grid_x.shape[0] * calib_grid_x.shape[1] * calib_grid_x.shape[2]
         calib_grid_x.shape = (num_calib_grid_pts, 1)
@@ -110,22 +110,27 @@ class Calibration:
     def run(self):
         # Connect to camera
         self.camera.connect()
+        logging.basicConfig()
+
         logging.debug(self.camera.intrinsics)
 
         logging.info('Collecting data...')
 
         calib_grid_pts = self._generate_grid()
+        print(calib_grid_pts.shape[0])
 
         logging.info('Total grid points: ', calib_grid_pts.shape[0])
 
         for tool_position in calib_grid_pts:
             logging.info('Requesting move to tool position: ', tool_position)
             np.save(self.tool_position, tool_position)
-            np.save(self.move_completed, 0)
+            np.save(self.move_completed, 1)
             while not np.load(self.move_completed):
                 time.sleep(0.1)
             # Wait for robot to be stable
             time.sleep(2)
+
+            print("fuck")
 
             # Find checkerboard center
             checkerboard_size = (3, 3)

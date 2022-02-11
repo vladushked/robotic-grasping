@@ -12,7 +12,7 @@ class RealSenseCamera:
                  device_id,
                  width=640,
                  height=480,
-                 fps=6):
+                 fps=30):
         self.device_id = device_id
         self.width = width
         self.height = height
@@ -26,7 +26,7 @@ class RealSenseCamera:
         # Start and configure
         self.pipeline = rs.pipeline()
         config = rs.config()
-        config.enable_device(str(self.device_id))
+        # config.enable_device(str(self.device_id))
         config.enable_stream(rs.stream.depth, self.width, self.height, rs.format.z16, self.fps)
         config.enable_stream(rs.stream.color, self.width, self.height, rs.format.rgb8, self.fps)
         cfg = self.pipeline.start(config)
