@@ -125,17 +125,18 @@ class Calibration:
 
         logging.debug(self.camera.intrinsics)
 
-        logging.info('Collecting data...')
+        print('Collecting data...')
 
         calib_grid_pts = self._generate_grid()
 
-        logging.info('Total grid points: ', calib_grid_pts.shape[0])
+        print('Total grid points: ', calib_grid_pts.shape[0])
 
         for tool_position in calib_grid_pts:
-            logging.info('Requesting move to tool position: ', tool_position)
+            print('Requesting move to tool position: ', tool_position)
 
-            # self.s.effectorMovement(tool_position[0], tool_position[1], tool_position[2], 0)
-            # self.s.coordinateRequest()
+            print(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 0)
+            self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 0)
+            self.s.coordinateRequest()
 
             # np.save(self.tool_position, tool_position)
             # np.save(self.move_completed, 1)
@@ -144,10 +145,8 @@ class Calibration:
             # Wait for robot to be stable
             time.sleep(2)
 
-            # print("fuck")
-
             # Find checkerboard center
-            checkerboard_size = (3, 3)
+            checkerboard_size = (4, 4)
             refine_criteria = (cv2.TERM_CRITERIA_EPS +
                                cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
             image_bundle = self.camera.get_image_bundle()
@@ -189,25 +188,25 @@ class Calibration:
                 cv2.imshow('Calibration', vis)
                 cv2.waitKey(10)
             else:
-                logging.info('Checker board not found')
+                print('Checker board not found')
 
         self.measured_pts = np.asarray(self.measured_pts)
         self.observed_pts = np.asarray(self.observed_pts)
         self.observed_pix = np.asarray(self.observed_pix)
 
         # Optimize z scale w.r.t. rigid transform error
-        logging.info('Calibrating...')
+        print('Calibrating...')
         z_scale_init = 1
         optim_result = optimize.minimize(
             self._get_rigid_transform_error, np.asarray(z_scale_init), method='Nelder-Mead')
         camera_depth_offset = optim_result.x
 
         # Save camera optimized offset and camera pose
-        logging.info('Saving...')
+        print('Saving...')
         np.savetxt('saved_data/camera_depth_scale.txt',
                    camera_depth_offset, delimiter=' ')
         rmse = self._get_rigid_transform_error(camera_depth_offset)
-        logging.info('RMSE: ', rmse)
+        print('RMSE: ', rmse)
         np.savetxt('saved_data/camera_pose.txt',
                    self.camera2world, delimiter=' ')
-        logging.info('Done.')
+        print('Done.')
