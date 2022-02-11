@@ -38,7 +38,7 @@ class Calibration:
         # self.move_completed = os.path.join(homedir, "move_completed.npy")
         # self.tool_position = os.path.join(homedir, "tool_position.npy")
 
-        self.s = RAS_Connect('/dev/ttyTHS0')
+        # self.s = RAS_Connect('/dev/ttyTHS0')
 
     @staticmethod
     def _get_rigid_transform(A, B):
@@ -135,18 +135,18 @@ class Calibration:
             print('Requesting move to tool position: ', tool_position)
 
             print(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 0)
-            self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 0)
-            self.s.coordinateRequest()
+            # self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 0)
+            # self.s.coordinateRequest()
 
             # np.save(self.tool_position, tool_position)
             # np.save(self.move_completed, 1)
             # while not np.load(self.move_completed):
                 # time.sleep(0.1)
             # Wait for robot to be stable
-            time.sleep(2)
+            time.sleep(0.5)
 
             # Find checkerboard center
-            checkerboard_size = (4, 4)
+            checkerboard_size = (3, 3)
             refine_criteria = (cv2.TERM_CRITERIA_EPS +
                                cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
             image_bundle = self.camera.get_image_bundle()
@@ -154,41 +154,46 @@ class Calibration:
             camera_depth_img = image_bundle['aligned_depth']
             bgr_color_data = cv2.cvtColor(camera_color_img, cv2.COLOR_RGB2BGR)
             gray_data = cv2.cvtColor(bgr_color_data, cv2.COLOR_RGB2GRAY)
-            checkerboard_found, corners = cv2.findChessboardCorners(gray_data, checkerboard_size, None,
+            
+            checkerboard_found = False
+            while checkerboard_found == False:
+                checkerboard_found, corners = cv2.findChessboardCorners(gray_data, checkerboard_size, None,
                                                                     cv2.CALIB_CB_ADAPTIVE_THRESH)
-            if checkerboard_found:
-                corners_refined = cv2.cornerSubPix(
-                    gray_data, corners, (3, 3), (-1, -1), refine_criteria)
+                if checkerboard_found:
+                    corners_refined = cv2.cornerSubPix(
+                        gray_data, corners, (3, 3), (-1, -1), refine_criteria)
 
-                # Get observed checkerboard center 3D point in camera space
-                checkerboard_pix = np.round(
-                    corners_refined[4, 0, :]).astype(int)
-                checkerboard_z = camera_depth_img[checkerboard_pix[1]
-                                                  ][checkerboard_pix[0]]
-                checkerboard_x = np.multiply(checkerboard_pix[0] - self.camera.intrinsics.ppx,
-                                             checkerboard_z / self.camera.intrinsics.fx)
-                checkerboard_y = np.multiply(checkerboard_pix[1] - self.camera.intrinsics.ppy,
-                                             checkerboard_z / self.camera.intrinsics.fy)
-                if checkerboard_z == 0:
-                    continue
+                    # Get observed checkerboard center 3D point in camera space
+                    checkerboard_pix = np.round(
+                        corners_refined[4, 0, :]).astype(int)
+                    checkerboard_z = camera_depth_img[checkerboard_pix[1]
+                                                    ][checkerboard_pix[0]]
+                    checkerboard_x = np.multiply(checkerboard_pix[0] - self.camera.intrinsics.ppx,
+                                                checkerboard_z / self.camera.intrinsics.fx)
+                    checkerboard_y = np.multiply(checkerboard_pix[1] - self.camera.intrinsics.ppy,
+                                                checkerboard_z / self.camera.intrinsics.fy)
+                    if checkerboard_z == 0:
+                        continue
 
-                # Save calibration point and observed checkerboard center
-                self.observed_pts.append(
-                    [checkerboard_x, checkerboard_y, checkerboard_z])
-                # tool_position[2] += self.checkerboard_offset_from_tool
-                tool_position = tool_position + self.checkerboard_offset_from_tool
+                    # Save calibration point and observed checkerboard center
+                    self.observed_pts.append(
+                        [checkerboard_x, checkerboard_y, checkerboard_z])
+                    # tool_position[2] += self.checkerboard_offset_from_tool
+                    tool_position = tool_position + self.checkerboard_offset_from_tool
 
-                self.measured_pts.append(tool_position)
-                self.observed_pix.append(checkerboard_pix)
+                    self.measured_pts.append(tool_position)
+                    self.observed_pix.append(checkerboard_pix)
 
-                # Draw and display the corners
-                vis = cv2.drawChessboardCorners(
-                    bgr_color_data, (1, 1), corners_refined[4, :, :], checkerboard_found)
-                # cv2.imwrite('%06d.png' % len(self.measured_pts), vis)
-                cv2.imshow('Calibration', vis)
-                cv2.waitKey(10)
-            else:
-                print('Checker board not found')
+                    # Draw and display the corners
+                    vis = cv2.drawChessboardCorners(
+                        bgr_color_data, (1, 1), corners_refined[4, :, :], checkerboard_found)
+                    # cv2.imwrite('%06d.png' % len(self.measured_pts), vis)
+                    cv2.imshow('Found', vis)
+                    cv2.waitKey(10)
+                else:
+                    print('Checker board not found')
+                    cv2.imshow('Not found', bgr_color_data)
+                    cv2.waitKey(10)
 
         self.measured_pts = np.asarray(self.measured_pts)
         self.observed_pts = np.asarray(self.observed_pts)
