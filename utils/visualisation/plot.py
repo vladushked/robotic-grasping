@@ -33,7 +33,7 @@ def plot_results(
 
     plt.ion()
     plt.clf()
-    ax = fig.add_subplot(2, 3, 1)
+    ax = fig.add_subplot(1, 2, 1)
     ax.imshow(rgb_img)
     ax.set_title('RGB')
     ax.axis('off')

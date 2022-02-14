@@ -108,18 +108,19 @@ class GraspGenerator:
         while(True):
             print("Resetting position")
             self.s.grip(90)
-            self.s.effectorMovement(0, 200, 300, 0)
+            self.s.effectorMovement(0, 150, 300, 0)
             time.sleep(2)
             tool_position = self.generate()
             if tool_position is None:
                 continue
             print("To target position: ", tool_position)
-            self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000 - 20, - tool_position[3] * 100 * 0.47)
+            print("ANGLE: ", tool_position[3]  * 100)
+            self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, 20, - tool_position[3]  * 100 * 0.5 * 0.62)
             # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
             time.sleep(2)
-            self.s.grip(10)
+            self.s.grip(5)
             time.sleep(0.5)
-            self.s.effectorMovement(-200, 200, 300, 0)
+            self.s.effectorMovement(-400, 200, 300, 0)
             time.sleep(2)
             self.s.grip(90)
             time.sleep(2)
