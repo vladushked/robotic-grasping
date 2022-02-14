@@ -12,6 +12,8 @@ from utils.data.camera_data import CameraData
 from utils.dataset_processing.grasp import detect_grasps
 from utils.visualisation.plot import plot_grasp
 
+from RAS_Com import RAS_Connect
+
 
 class GraspGenerator:
     def __init__(self, saved_model_path, cam_id, visualize=False):
@@ -40,6 +42,9 @@ class GraspGenerator:
             self.fig = plt.figure(figsize=(10, 10))
         else:
             self.fig = None
+
+        self.s = RAS_Connect('/dev/ttyTHS0')
+
 
     def load_model(self):
         print('Loading model... ')
@@ -95,14 +100,10 @@ class GraspGenerator:
 
         if self.fig:
             plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, save=True)
+        
+        return grasp_pose
 
     def run(self):
-        np.save(self.grasp_request, 1)
-        while True:
-            if np.load(self.grasp_request):
-                self.generate()
-                np.save(self.grasp_request, 1)
-                np.save(self.grasp_available, 1)
-                time.sleep(1)
-            else:
-                time.sleep(0.1)
+        tool_position = self.generate()
+        self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000, 0)
+        time.sleep(1)
