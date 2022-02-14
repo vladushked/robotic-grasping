@@ -66,6 +66,9 @@ class GraspGenerator:
 
         q_img, ang_img, width_img = post_process_output(pred['pos'], pred['cos'], pred['sin'], pred['width'])
         grasps = detect_grasps(q_img, ang_img, width_img)
+        
+        if grasps is None:
+            return None
 
         # Get grasp position from model output
         pos_z = depth[grasps[0].center[0] + self.cam_data.top_left[0], grasps[0].center[1] + self.cam_data.top_left[1]] * self.cam_depth_scale - 0.04
@@ -108,6 +111,8 @@ class GraspGenerator:
             self.s.effectorMovement(0, 200, 300, 0)
             time.sleep(2)
             tool_position = self.generate()
+            if tool_position is None:
+                continue
             print("To target position: ", tool_position)
             self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000 - 20, - tool_position[3] * 100 * 0.47)
             # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
