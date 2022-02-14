@@ -13,7 +13,7 @@ class CameraData:
                  height=480,
                  output_size=224,
                  include_depth=True,
-                 include_rgb=False
+                 include_rgb=True
                  ):
         """
         :param output_size: Image output size in pixels (square)
