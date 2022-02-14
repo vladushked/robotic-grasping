@@ -102,6 +102,8 @@ class GraspGenerator:
         return grasp_pose
 
     def run(self):
-        tool_position = self.generate()
-        self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000, 0)
-        time.sleep(1)
+        while(True):
+            tool_position = self.generate()
+            # self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000, 0)
+            self.s.effectorMovement(0, 0, 0, tool_position[3] * 1000)
+            time.sleep(2)
