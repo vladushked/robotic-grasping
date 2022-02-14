@@ -105,5 +105,5 @@ class GraspGenerator:
         while(True):
             tool_position = self.generate()
             # self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000, 0)
-            self.s.effectorMovement(0, 0, 0, tool_position[3] * 1000)
+            self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
             time.sleep(2)
