@@ -67,7 +67,7 @@ class GraspGenerator:
         q_img, ang_img, width_img = post_process_output(pred['pos'], pred['cos'], pred['sin'], pred['width'])
         grasps = detect_grasps(q_img, ang_img, width_img)
         
-        if grasps is None:
+        if len(grasps) == 0:
             return None
 
         # Get grasp position from model output
