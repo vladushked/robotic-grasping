@@ -24,7 +24,7 @@ class GraspGenerator:
         self.model = None
         self.device = None
 
-        self.cam_data = CameraData(include_depth=True, include_rgb=False)
+        self.cam_data = CameraData(include_depth=True, include_rgb=True)
 
         # Connect to camera
         self.camera.connect()
