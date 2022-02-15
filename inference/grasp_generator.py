@@ -65,7 +65,7 @@ class GraspGenerator:
             pred = self.model.predict(xc)
 
         q_img, ang_img, width_img = post_process_output(pred['pos'], pred['cos'], pred['sin'], pred['width'])
-        grasps = detect_grasps(q_img, ang_img, width_img)
+        grasps = detect_grasps(q_img, ang_img, width_img,  no_grasps=10)
         
         if len(grasps) == 0:
             return None
@@ -115,10 +115,10 @@ class GraspGenerator:
                 continue
             print("To target position: ", tool_position)
             print("ANGLE: ", tool_position[3]  * 100)
-            self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, 20, - tool_position[3]  * 100 * 0.5 * 0.62)
+            self.s.effectorMovement(tool_position[0] * 1000- 40, tool_position[1] * 1000 - 70, 20, - tool_position[3]  * 100 * 0.5 * 0.62)
             # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
             time.sleep(2)
-            self.s.grip(5)
+            self.s.grip(0)
             time.sleep(0.5)
             self.s.effectorMovement(-400, 200, 300, 0)
             time.sleep(2)
