@@ -18,13 +18,26 @@ from RAS_Com import RAS_Connect
 class GraspGenerator:
     def __init__(self, saved_model_path, cam_id, visualize=False):
         self.saved_model_path = saved_model_path
-        self.camera = RealSenseCamera(device_id=cam_id)
+        
+        self.width = 1280
+        self.height = 720
+        self.output_size = 450
+
+                
+        self.camera = RealSenseCamera(device_id=cam_id, 
+                                      width=self.width,
+                                      height=self.height,
+                                      fps=30)
 
         self.saved_model_path = saved_model_path
         self.model = None
         self.device = None
 
-        self.cam_data = CameraData(include_depth=True, include_rgb=True)
+        self.cam_data = CameraData(width=self.width,
+                                   height=self.height,
+                                   output_size=self.output_size,
+                                   include_depth=True,
+                                   include_rgb=True)
 
         # Connect to camera
         self.camera.connect()
@@ -115,7 +128,7 @@ class GraspGenerator:
                 continue
             print("To target position: ", tool_position)
             print("ANGLE: ", tool_position[3]  * 100)
-            self.s.effectorMovement(tool_position[0] * 1000- 40, tool_position[1] * 1000 - 70, 20, - tool_position[3]  * 100 * 0.5 * 0.62)
+            self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, 20, - tool_position[3]  * 100 * 0.5 * 0.62)
             # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
             time.sleep(2)
             self.s.grip(0)
