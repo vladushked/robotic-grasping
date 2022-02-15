@@ -37,7 +37,7 @@ def plot_results(
 
     plt.ion()
     plt.clf()
-    ax = fig.add_subplot(1, 2, 1)
+    ax = fig.add_subplot(2, 3, 1)
     ax.imshow(rgb_img)
     ax.set_title('RGB')
     ax.axis('off')
@@ -56,10 +56,7 @@ def plot_results(
     ax = fig.add_subplot(2, 3, 3)
     ax.imshow(rgb_img)
     for i, g in enumerate(gs):
-        if i == 0:
-            g.plot(ax, True)
-        else:
-            g.plot(ax)
+        g.plot(ax)
         ax.text(g.center[1], g.center[0], str(grasp_q_img[g.center[0]][g.center[1]]), fontdict = font)
 
     ax.set_title('Grasp')
