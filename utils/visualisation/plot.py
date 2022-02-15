@@ -1,5 +1,9 @@
+from cmath import cos, sin
 import warnings
 from datetime import datetime
+from xml.etree.ElementTree import PI
+
+import cv2
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -101,10 +105,17 @@ def plot_grasp(
     plt.ion()
     plt.clf()
 
+    font = {'family': 'cursive',
+        'color':  'white',
+        'weight': 'bold',
+        'size': 12,
+        }
     ax = plt.subplot(111)
     ax.imshow(rgb_img)
     for g in grasps:
         g.plot(ax)
+        ax.text(g.center[1], g.center[0], str(grasp_q_img[g.center[0]][g.center[1]]), fontdict = font)
+        
     ax.set_title('Grasp')
     ax.axis('off')
 
@@ -114,6 +125,25 @@ def plot_grasp(
     if save:
         time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         fig.savefig('results/{}.png'.format(time))
+
+    # # img = np.rollaxis(rgb_img,0,3)
+    img = np.copy(rgb_img)
+
+    for g in grasps:
+        y1_length = int(g.center[0] + g.width * np.cos(g.angle));
+        x1_length =  int(g.center[1] + g.width * np.sin(g.angle));
+        y2_length = int(g.center[0] - g.width * np.cos(g.angle));
+        x2_length =  int(g.center[1] - g.width * np.sin(g.angle));
+        color = list(np.random.random(size=3) * 256)
+        cv2.line(img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
+        cv2.line(grasp_q_img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
+        cv2.line(grasp_angle_img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
+        cv2.line(grasp_width_img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
+    cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
+    cv2.imshow('RealSense', np.hstack((grasp_q_img, grasp_angle_img, grasp_width_img)))
+    cv2.imshow("RGB", img)
+    cv2.waitKey(1)
+
 
 
 def save_results(rgb_img, grasp_q_img, grasp_angle_img, depth_img=None, no_grasps=1, grasp_width_img=None):

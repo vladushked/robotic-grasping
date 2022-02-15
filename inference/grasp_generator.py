@@ -1,5 +1,6 @@
 import os
 import time
+import cv2
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,15 +17,16 @@ from RAS_Com import RAS_Connect
 
 
 class GraspGenerator:
-    def __init__(self, saved_model_path, cam_id, visualize=False):
+    def __init__(self, saved_model_path, cam_id, visualize=False, enable_arm=False):
         self.saved_model_path = saved_model_path
-        
+
         self.width = 640
         self.height = 480
         self.output_size = 224
 
-                
-        self.camera = RealSenseCamera(device_id=cam_id, 
+        self.enable_arm = enable_arm
+
+        self.camera = RealSenseCamera(device_id=cam_id,
                                       width=self.width,
                                       height=self.height,
                                       fps=30)
@@ -44,7 +46,8 @@ class GraspGenerator:
 
         # Load camera pose and depth scale (from running calibration)
         self.cam_pose = np.loadtxt('saved_data/camera_pose.txt', delimiter=' ')
-        self.cam_depth_scale = np.loadtxt('saved_data/camera_depth_scale.txt', delimiter=' ')
+        self.cam_depth_scale = np.loadtxt(
+            'saved_data/camera_depth_scale.txt', delimiter=' ')
 
         homedir = os.path.join(os.path.expanduser('~'), "grasp-comms")
         self.grasp_request = os.path.join(homedir, "grasp_request.npy")
@@ -56,8 +59,8 @@ class GraspGenerator:
         else:
             self.fig = None
 
-        self.s = RAS_Connect('/dev/ttyTHS0')
-
+        if self.enable_arm:
+            self.s = RAS_Connect('/dev/ttyTHS0')
 
     def load_model(self):
         print('Loading model... ')
@@ -77,14 +80,19 @@ class GraspGenerator:
             xc = x.to(self.device)
             pred = self.model.predict(xc)
 
-        q_img, ang_img, width_img = post_process_output(pred['pos'], pred['cos'], pred['sin'], pred['width'])
+        q_img, ang_img, width_img = post_process_output(
+            pred['pos'], pred['cos'], pred['sin'], pred['width'])
         grasps = detect_grasps(q_img, ang_img, width_img,  no_grasps=10)
-        
+        print(q_img.shape)
+        print(ang_img.shape)
+        print(width_img.shape)
+
         if len(grasps) == 0:
             return None
 
         # Get grasp position from model output
-        pos_z = depth[grasps[0].center[0] + self.cam_data.top_left[0], grasps[0].center[1] + self.cam_data.top_left[1]] * self.cam_depth_scale - 0.04
+        pos_z = depth[grasps[0].center[0] + self.cam_data.top_left[0],
+                      grasps[0].center[1] + self.cam_data.top_left[1]] * self.cam_depth_scale - 0.04
         pos_x = np.multiply(grasps[0].center[1] + self.cam_data.top_left[1] - self.camera.intrinsics.ppx,
                             pos_z / self.camera.intrinsics.fx)
         pos_y = np.multiply(grasps[0].center[0] + self.cam_data.top_left[0] - self.camera.intrinsics.ppy,
@@ -99,7 +107,8 @@ class GraspGenerator:
 
         # Convert camera to robot coordinates
         camera2robot = self.cam_pose
-        target_position = np.dot(camera2robot[0:3, 0:3], target) + camera2robot[0:3, 3:]
+        target_position = np.dot(
+            camera2robot[0:3, 0:3], target) + camera2robot[0:3, 3:]
         target_position = target_position[0:3, 0]
 
         # Convert camera to robot angle
@@ -113,29 +122,37 @@ class GraspGenerator:
         print('grasp_pose: ', grasp_pose)
 
         if self.fig:
-            plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, save=True)
-        
+            plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, grasp_q_img=q_img,
+                       grasp_angle_img=ang_img,
+                       no_grasps=10,
+                       grasp_width_img=width_img)
+
         return grasp_pose
 
     def run(self):
-        while(True):
-            print("Resetting position")
-            self.s.grip(90)
-            self.s.effectorMovement(0, 150, 300, 0)
-            time.sleep(2)
-            tool_position = self.generate()
-            if tool_position is None:
-                continue
-            print("To target position: ", tool_position)
-            print("ANGLE: ", tool_position[3]  * 100)
-            print("Z: ", tool_position[2] * 1000)
-            self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, - tool_position[2] * 1000 - 200, - tool_position[3]  * 100 * 0.5 * 0.62)
-            # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
-            time.sleep(2)
-            self.s.grip(0)
-            time.sleep(0.5)
-            self.s.effectorMovement(-400, 200, 300, 0)
-            time.sleep(2)
-            self.s.grip(90)
-            time.sleep(2)
-            
+        if self.enable_arm:
+            while(True):
+                print("Resetting position")
+                self.s.grip(90)
+                self.s.effectorMovement(0, 150, 300, 0)
+                time.sleep(2)
+                tool_position = self.generate()
+                if tool_position is None:
+                    continue
+                print("To target position: ", tool_position)
+                print("ANGLE: ", tool_position[3] * 100)
+                print("Z: ", tool_position[2] * 1000)
+                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, -
+                                        tool_position[2] * 1000 - 200, - tool_position[3] * 100 * 0.5 * 0.62)
+                # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
+                time.sleep(2)
+                self.s.grip(0)
+                time.sleep(0.5)
+                self.s.effectorMovement(-400, 200, 300, 0)
+                time.sleep(2)
+                self.s.grip(90)
+                time.sleep(2)
+        else:
+            while(True):
+                tool_position = self.generate()
+                time.sleep(1)
