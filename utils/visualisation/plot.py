@@ -41,6 +41,11 @@ def plot_results(
     ax.imshow(rgb_img)
     ax.set_title('RGB')
     ax.axis('off')
+    font = {'family': 'cursive',
+        'color':  'white',
+        'weight': 'bold',
+        'size': 12,
+        }
 
     if depth_img is not None:
         ax = fig.add_subplot(2, 3, 2)
@@ -50,8 +55,13 @@ def plot_results(
 
     ax = fig.add_subplot(2, 3, 3)
     ax.imshow(rgb_img)
-    for g in gs:
-        g.plot(ax)
+    for i, g in enumerate(gs):
+        if i == 0:
+            g.plot(ax, True)
+        else:
+            g.plot(ax)
+        ax.text(g.center[1], g.center[0], str(grasp_q_img[g.center[0]][g.center[1]]), fontdict = font)
+
     ax.set_title('Grasp')
     ax.axis('off')
 

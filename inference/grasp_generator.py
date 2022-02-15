@@ -11,7 +11,7 @@ from hardware.device import get_device
 from inference.post_process import post_process_output
 from utils.data.camera_data import CameraData
 from utils.dataset_processing.grasp import detect_grasps
-from utils.visualisation.plot import plot_grasp
+from utils.visualisation.plot import plot_grasp, plot_results
 
 from RAS_Com import RAS_Connect
 
@@ -122,10 +122,18 @@ class GraspGenerator:
         print('grasp_pose: ', grasp_pose)
 
         if self.fig:
-            plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, grasp_q_img=q_img,
-                       grasp_angle_img=ang_img,
-                       no_grasps=10,
-                       grasp_width_img=width_img)
+            # plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, grasp_q_img=q_img,
+            #            grasp_angle_img=ang_img,
+            #            no_grasps=10,
+            #            grasp_width_img=width_img)
+
+            plot_results(fig=self.fig,
+                        rgb_img=self.cam_data.get_rgb(rgb, False),
+                        depth_img=np.squeeze(self.cam_data.get_depth(depth)),
+                        grasp_q_img=q_img,
+                        grasp_angle_img=ang_img,
+                        no_grasps=10,
+                        grasp_width_img=width_img)
 
         return grasp_pose
 

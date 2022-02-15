@@ -323,14 +323,18 @@ class GraspRectangle:
             return
         self.points *= factor
 
-    def plot(self, ax, color=None):
+    def plot(self, ax, color=None, first=False):
         """
         Plot grasping rectangle.
         :param ax: Existing matplotlib axis
         :param color: matplotlib color code (optional)
         """
         points = np.vstack((self.points, self.points[0]))
-        ax.plot(points[:, 1], points[:, 0], color=color)
+        if first:
+            ax.plot(points[:, 1], points[:, 0], color=color, linestyle= '--')
+        else:
+            ax.plot(points[:, 1], points[:, 0], color=color)
+        
 
     def zoom(self, factor, center):
         """
@@ -395,13 +399,13 @@ class Grasp:
             max_iou = max(max_iou, iou)
         return max_iou
 
-    def plot(self, ax, color=None):
+    def plot(self, ax, color=None, first=False):
         """
         Plot Grasp
         :param ax: Existing matplotlib axis
         :param color: (optional) color
         """
-        self.as_gr.plot(ax, color)
+        self.as_gr.plot(ax, color, first)
 
     def to_jacquard(self, scale=1):
         """
