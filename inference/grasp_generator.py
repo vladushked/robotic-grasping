@@ -148,7 +148,7 @@ class GraspGenerator:
                 
                 z = tool_position[2] * 0.5
                 if tool_position[2] > self.grip_height:
-                    z = tool_position[2] - self.grip_height
+                    z = tool_position[2] - self.grip_height * 0.5
                 print("___POSITION___: ", tool_position)
                 print("___ANGLE___: ", tool_position[3] * 100)
                 print("___Z___: ", z * 1000)
