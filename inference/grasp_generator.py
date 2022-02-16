@@ -100,7 +100,7 @@ class GraspGenerator:
 
         target = np.asarray([pos_x, pos_y, pos_z])
         target.shape = (3, 1)
-        print('target: ', target)
+        #print('target: ', target)
 
         # Convert camera to robot coordinates
         camera2robot = self.cam_pose
@@ -150,17 +150,18 @@ class GraspGenerator:
                 print("___LENGTH___", grasp_width)
                 print("___WIDTH___", grasp_width)
                 # self.s.grip()
-                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
+                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000 + 50, - tool_position[3] * 100 * 0.5 * 0.62)
                 # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
                 time.sleep(1)
-                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
+                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, (tool_position[2] * 0.5) * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
+                time.sleep(0.5)
                 self.s.grip(0)
+                time.sleep(0.5)
                 self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, 300, - tool_position[3] * 100 * 0.5 * 0.62)
                 time.sleep(0.5)
                 self.s.effectorMovement(-400, 200, 300, 0)
                 time.sleep(1.5)
-                self.s.grip(90)
-                time.sleep(1)
+                
         else:
             while(True):
                 tool_position = self.generate()
