@@ -49,7 +49,7 @@ def plot_results(
 
     if depth_img is not None:
         ax = fig.add_subplot(2, 3, 2)
-        ax.imshow(depth_img, cmap='gray')
+        ax.imshow(depth_img, cmap='jet')
         ax.set_title('Depth')
         ax.axis('off')
 

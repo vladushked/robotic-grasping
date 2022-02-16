@@ -92,7 +92,7 @@ class GraspGenerator:
 
         # Get grasp position from model output
         pos_z = depth[grasps[0].center[0] + self.cam_data.top_left[0],
-                      grasps[0].center[1] + self.cam_data.top_left[1]] * self.cam_depth_scale - 0.04
+                      grasps[0].center[1] + self.cam_data.top_left[1]] * self.cam_depth_scale
         pos_x = np.multiply(grasps[0].center[1] + self.cam_data.top_left[1] - self.camera.intrinsics.ppx,
                             pos_z / self.camera.intrinsics.fx)
         pos_y = np.multiply(grasps[0].center[0] + self.cam_data.top_left[0] - self.camera.intrinsics.ppy,
@@ -150,14 +150,15 @@ class GraspGenerator:
                 print("To target position: ", tool_position)
                 print("ANGLE: ", tool_position[3] * 100)
                 print("Z: ", tool_position[2] * 1000)
-                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, 20, - tool_position[3] * 100 * 0.5 * 0.62)
+                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
                 # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
                 time.sleep(1)
+                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
                 self.s.grip(0)
                 self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, 300, - tool_position[3] * 100 * 0.5 * 0.62)
-                time.sleep(0.1)
+                time.sleep(0.5)
                 self.s.effectorMovement(-400, 200, 300, 0)
-                time.sleep(2)
+                time.sleep(1.5)
                 self.s.grip(90)
                 time.sleep(1)
         else:
