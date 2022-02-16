@@ -135,7 +135,7 @@ class GraspGenerator:
                         no_grasps=10,
                         grasp_width_img=width_img)
 
-        return grasp_pose
+        return grasp_pose, grasps[0].width
 
     def run(self):
         if self.enable_arm:
@@ -144,12 +144,14 @@ class GraspGenerator:
                 self.s.grip(90)
                 self.s.effectorMovement(0, 150, 300, 0)
                 time.sleep(1)
-                tool_position = self.generate()
+                tool_position, grasp_width = self.generate()
                 if tool_position is None:
                     continue
                 print("To target position: ", tool_position)
                 print("ANGLE: ", tool_position[3] * 100)
                 print("Z: ", tool_position[2] * 1000)
+                print("grasp_width", grasp_width)
+                # self.s.grip()
                 self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
                 # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
                 time.sleep(1)
