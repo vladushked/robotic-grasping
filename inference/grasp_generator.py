@@ -83,9 +83,6 @@ class GraspGenerator:
         q_img, ang_img, width_img = post_process_output(
             pred['pos'], pred['cos'], pred['sin'], pred['width'])
         grasps = detect_grasps(q_img, ang_img, width_img,  no_grasps=10)
-        print(q_img.shape)
-        print(ang_img.shape)
-        print(width_img.shape)
 
         if len(grasps) == 0:
             return None
@@ -119,7 +116,7 @@ class GraspGenerator:
         # Concatenate grasp pose with grasp angle
         grasp_pose = np.append(target_position, target_angle[2])
 
-        print('grasp_pose: ', grasp_pose)
+        # print('grasp_pose: ', grasp_pose)
 
         if self.fig:
             # plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, grasp_q_img=q_img,
@@ -147,10 +144,11 @@ class GraspGenerator:
                 tool_position, grasp_width = self.generate()
                 if tool_position is None:
                     continue
-                print("To target position: ", tool_position)
-                print("ANGLE: ", tool_position[3] * 100)
-                print("Z: ", tool_position[2] * 1000)
-                print("grasp_width", grasp_width)
+                print("___POSITION___: ", tool_position)
+                print("___ANGLE___: ", tool_position[3] * 100)
+                print("___Z___: ", tool_position[2] * 1000)
+                print("___LENGTH___", grasp_width)
+                print("___WIDTH___", grasp_width)
                 # self.s.grip()
                 self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
                 # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
