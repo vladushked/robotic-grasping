@@ -23,6 +23,7 @@ class GraspGenerator:
         self.width = 640
         self.height = 480
         self.output_size = 350
+        self.grip_height = 0.5
 
         self.enable_arm = enable_arm
 
@@ -144,16 +145,20 @@ class GraspGenerator:
                 tool_position, grasp_width = self.generate()
                 if tool_position is None:
                     continue
+                
+                z = tool_position[2] * 0.5
+                if tool_position[2] > self.grip_height:
+                    z = tool_position[2] - self.grip_height
                 print("___POSITION___: ", tool_position)
                 print("___ANGLE___: ", tool_position[3] * 100)
-                print("___Z___: ", tool_position[2] * 1000)
+                print("___Z___: ", z * 1000)
                 print("___LENGTH___", grasp_width)
                 print("___WIDTH___", grasp_width)
                 # self.s.grip()
-                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, tool_position[2] * 1000 + 50, - tool_position[3] * 100 * 0.5 * 0.62)
+                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, z * 1000 + 50, - tool_position[3] * 100 * 0.5 * 0.62)
                 # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
                 time.sleep(1)
-                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, (tool_position[2] * 0.5) * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
+                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, z * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
                 time.sleep(0.5)
                 self.s.grip(0)
                 time.sleep(0.5)
