@@ -140,6 +140,7 @@ class GraspGenerator:
             while(True):
                 print("Resetting position")
                 self.s.grip(90)
+                time.sleep(2)
                 self.s.effectorMovement(0, 150, 300, 0)
                 time.sleep(2)
                 tool_position, grasp_width = self.generate()
@@ -159,11 +160,11 @@ class GraspGenerator:
                 # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
                 time.sleep(2)
                 self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, z * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
-                time.sleep(1)
+                time.sleep(2)
                 self.s.grip(0)
-                time.sleep(1)
+                time.sleep(2)
                 self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, 300, - tool_position[3] * 100 * 0.5 * 0.62)
-                time.sleep(1)
+                time.sleep(2)
                 self.s.effectorMovement(-400, 200, 300, 0)
                 time.sleep(2)
                 
