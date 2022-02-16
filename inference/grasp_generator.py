@@ -97,7 +97,7 @@ class GraspGenerator:
                             pos_z / self.camera.intrinsics.fy)
 
         if pos_z == 0:
-            return
+            return None, None
 
         target = np.asarray([pos_x, pos_y, pos_z])
         target.shape = (3, 1)
