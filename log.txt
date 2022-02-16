@@ -1,0 +1,435 @@
+bytearray(b'M03 090 dx*k\r')
+bytearray(b'M03 0 dx*b\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 yn*\x7f\r')
+bytearray(b'G01 0 yn*a\r')
+WARNING:matplotlib.font_manager:findfont: Font family ['cursive'] not found. Falling back to DejaVu Sans.
+___POSITION___:  [ 0.20864531  0.4271075   0.0448526  -0.36103526]
+___ANGLE___:  -36.10352615190561
+___Z___:  22.42629885811781
+___LENGTH___ 37.78190994262695
+___WIDTH___ 37.78190994262695
+bytearray(b'G01 X+208 Y+427 Z+072 R+011 ew*s\r')
+bytearray(b'G01 0 ew*d\r')
+bytearray(b'G01 X+208 Y+427 Z+022 R+011 cg*`\r')
+bytearray(b'G01 0 cg*r\r')
+bytearray(b'M03 000 ob*s\r')
+bytearray(b'M03 0 ob*s\r')
+bytearray(b'G01 X+208 Y+427 Z+300 R+011 rc*v\r')
+bytearray(b'G01 0 rc*g\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 ng*e\r')
+bytearray(b'G01 0 ng*\x7f\r')
+Resetting position
+bytearray(b'M03 090 xu*z\r')
+bytearray(b'M03 0 xu*s\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 sj*q\r')
+bytearray(b'G01 0 sj*o\r')
+___POSITION___:  [-0.11161981  0.42723817  0.02628799 -0.71969007]
+___ANGLE___:  -71.96900674442132
+___Z___:  13.143993617893312
+___LENGTH___ 28.270872116088867
+___WIDTH___ 28.270872116088867
+bytearray(b'G01 X-111 Y+427 Z+063 R+022 ui*p\r')
+bytearray(b'G01 0 ui*j\r')
+bytearray(b'G01 X-111 Y+427 Z+013 R+022 fr*\x7f\r')
+bytearray(b'G01 0 fr*b\r')
+bytearray(b'M03 000 su*x\r')
+bytearray(b'M03 0 su*x\r')
+bytearray(b'G01 X-111 Y+427 Z+300 R+022 fs*\x7f\r')
+bytearray(b'G01 0 fs*c\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 bv*x\r')
+bytearray(b'G01 0 bv*b\r')
+Resetting position
+bytearray(b'M03 090 ow*o\r')
+bytearray(b'M03 0 ow*f\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 ob*e\r')
+bytearray(b'G01 0 ob*{\r')
+___POSITION___:  [-0.22492305  0.37086408  0.04212232  0.0469257 ]
+___ANGLE___:  4.692569801776481
+___Z___:  21.06116066749952
+___LENGTH___ 29.786537170410156
+___WIDTH___ 29.786537170410156
+bytearray(b'G01 X-224 Y+370 Z+071 R-001 tt*h\r')
+bytearray(b'G01 0 tt*v\r')
+bytearray(b'G01 X-224 Y+370 Z+021 R-001 fg*l\r')
+bytearray(b'G01 0 fg*w\r')
+bytearray(b'M03 000 xp*v\r')
+bytearray(b'M03 0 xp*v\r')
+bytearray(b'G01 X-224 Y+370 Z+300 R-001 oy*{\r')
+bytearray(b'G01 0 oy*`\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 dx*p\r')
+bytearray(b'G01 0 dx*j\r')
+Resetting position
+bytearray(b'M03 090 ge*u\r')
+bytearray(b'M03 0 ge*|\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 kh*k\r')
+bytearray(b'G01 0 kh*u\r')
+___POSITION___:  [-0.16380482  0.41562709  0.04761161 -0.6295952 ]
+___ANGLE___:  -62.95951964499742
+___Z___:  23.805804444863742
+___LENGTH___ 34.7767333984375
+___WIDTH___ 34.7767333984375
+bytearray(b'G01 X-163 Y+415 Z+073 R+019 jc*h\r')
+bytearray(b'G01 0 jc*\x7f\r')
+bytearray(b'G01 X-163 Y+415 Z+023 R+019 on*e\r')
+bytearray(b'G01 0 on*w\r')
+bytearray(b'M03 000 tf*l\r')
+bytearray(b'M03 0 tf*l\r')
+bytearray(b'G01 X-163 Y+415 Z+300 R+019 qb*u\r')
+bytearray(b'G01 0 qb*e\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 tv*n\r')
+bytearray(b'G01 0 tv*t\r')
+Resetting position
+bytearray(b'M03 090 ty*z\r')
+bytearray(b'M03 0 ty*s\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 dq*}\r')
+bytearray(b'G01 0 dq*c\r')
+___POSITION___:  [-0.15957415  0.42219199  0.04627718 -0.41682798]
+___ANGLE___:  -41.68279818606685
+___Z___:  23.138589921204435
+___LENGTH___ 32.9843635559082
+___WIDTH___ 32.9843635559082
+bytearray(b'G01 X-159 Y+422 Z+073 R+012 up*b\r')
+bytearray(b'G01 0 up*s\r')
+bytearray(b'G01 X-159 Y+422 Z+023 R+012 up*g\r')
+bytearray(b'G01 0 up*s\r')
+bytearray(b'M03 000 nz*j\r')
+bytearray(b'M03 0 nz*j\r')
+bytearray(b'G01 X-159 Y+422 Z+300 R+012 dh*l\r')
+bytearray(b'G01 0 dh*z\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 hk*o\r')
+bytearray(b'G01 0 hk*u\r')
+Resetting position
+bytearray(b'M03 090 gx*h\r')
+bytearray(b'M03 0 gx*a\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 jj*h\r')
+bytearray(b'G01 0 jj*v\r')
+___POSITION___:  [ 0.00503004  0.32167773  0.0450257  -0.60483578]
+___ANGLE___:  -60.48357805422795
+___Z___:  22.512850904300162
+___LENGTH___ 45.06283950805664
+___WIDTH___ 45.06283950805664
+bytearray(b'G01 X+005 Y+321 Z+072 R+018 hc*m\r')
+bytearray(b'G01 0 hc*}\r')
+bytearray(b'G01 X+005 Y+321 Z+022 R+018 ce*e\r')
+bytearray(b'G01 0 ce*p\r')
+bytearray(b'M03 000 tq*{\r')
+bytearray(b'M03 0 tq*{\r')
+bytearray(b'G01 X+005 Y+321 Z+300 R+018 mo*b\r')
+bytearray(b'G01 0 mo*t\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 ds*{\r')
+bytearray(b'G01 0 ds*a\r')
+Resetting position
+bytearray(b'M03 090 xr*}\r')
+bytearray(b'M03 0 xr*t\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 sy*b\r')
+bytearray(b'G01 0 sy*|\r')
+___POSITION___:  [0.31448969 0.60925855 0.04075089 0.17632519]
+___ANGLE___:  17.632518945289952
+___Z___:  20.375446242579475
+___LENGTH___ 22.893802642822266
+___WIDTH___ 22.893802642822266
+bytearray(b'G01 X+314 Y+609 Z+070 R-005 tk*}\r')
+bytearray(b'G01 \x08 tk*Q\r')
+bytearray(b'G01 X+314 Y+609 Z+020 R-005 jm*`\r')
+bytearray(b'G01 \x08 jm*I\r')
+bytearray(b'M03 000 nt*d\r')
+bytearray(b'M03 0 nt*d\r')
+bytearray(b'G01 X+314 Y+609 Z+300 R-005 ym*r\r')
+bytearray(b'G01 \x08 ym*Z\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 oa*b\r')
+bytearray(b'G01 0 oa*x\r')
+Resetting position
+bytearray(b'M03 090 tv*u\r')
+bytearray(b'M03 0 tv*|\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 qh*q\r')
+bytearray(b'G01 0 qh*o\r')
+___POSITION___:  [-0.16637437  0.24987226  0.01564288 -0.10927776]
+___ANGLE___:  -10.927775628389428
+___Z___:  7.821439662726581
+___LENGTH___ 20.42882537841797
+___WIDTH___ 20.42882537841797
+bytearray(b'G01 X-166 Y+249 Z+057 R+003 sw*b\r')
+bytearray(b'G01 0 sw*r\r')
+bytearray(b'G01 X-166 Y+249 Z+007 R+003 zu*l\r')
+bytearray(b'G01 0 zu*y\r')
+bytearray(b'M03 000 ze*a\r')
+bytearray(b'M03 0 ze*a\r')
+bytearray(b'G01 X-166 Y+249 Z+300 R+003 ho*`\r')
+bytearray(b'G01 0 ho*q\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 ou*v\r')
+bytearray(b'G01 0 ou*l\r')
+Resetting position
+bytearray(b'M03 090 kx*d\r')
+bytearray(b'M03 0 kx*m\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 sq*j\r')
+bytearray(b'G01 0 sq*t\r')
+___POSITION___:  [-0.13017191  0.31245181  0.01658694 -0.03826603]
+___ANGLE___:  -3.826603323993464
+___Z___:  8.293468222454193
+___LENGTH___ 24.370275497436523
+___WIDTH___ 24.370275497436523
+bytearray(b'G01 X-130 Y+312 Z+058 R+001 rh*}\r')
+bytearray(b'G01 0 rh*l\r')
+bytearray(b'G01 X-130 Y+312 Z+008 R+001 zn*v\r')
+bytearray(b'G01 0 zn*b\r')
+bytearray(b'M03 000 zy*}\r')
+bytearray(b'M03 0 zy*}\r')
+bytearray(b'G01 X-130 Y+312 Z+300 R+001 ii*i\r')
+bytearray(b'G01 0 ii*v\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 sd*{\r')
+bytearray(b'G01 0 sd*a\r')
+Resetting position
+bytearray(b'M03 090 xi*f\r')
+bytearray(b'M03 0 xi*o\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 lz*~\r')
+bytearray(b'G01 0 lz*`\r')
+___POSITION___:  [0.25834007 0.31152985 0.01155192 0.08378513]
+___ANGLE___:  8.378512634467203
+___Z___:  5.7759606749218655
+___LENGTH___ 23.01748275756836
+___WIDTH___ 23.01748275756836
+bytearray(b'G01 X+258 Y+311 Z+055 R-002 ic*m\r')
+bytearray(b'G01 0 ic*|\r')
+bytearray(b'G01 X+258 Y+311 Z+005 R-002 ou*x\r')
+bytearray(b'G01 0 ou*l\r')
+bytearray(b'M03 000 nx*h\r')
+bytearray(b'M03 0 nx*h\r')
+bytearray(b'G01 X+258 Y+311 Z+300 R-002 oz*q\r')
+bytearray(b'G01 0 oz*c\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 gg*l\r')
+bytearray(b'G01 0 gg*v\r')
+Resetting position
+bytearray(b'M03 090 sx*|\r')
+bytearray(b'M03 0 sx*u\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 pz*b\r')
+bytearray(b'G01 0 pz*|\r')
+___POSITION___:  [0.25834007 0.31152985 0.01155192 0.0752472 ]
+___ANGLE___:  7.524719984435388
+___Z___:  5.7759606749218655
+___LENGTH___ 24.032459259033203
+___WIDTH___ 24.032459259033203
+bytearray(b'G01 X+258 Y+311 Z+055 R-002 hk*d\r')
+bytearray(b'G01 0 hk*u\r')
+bytearray(b'G01 X+258 Y+311 Z+005 R-002 su*d\r')
+bytearray(b'G01 0 su*p\r')
+bytearray(b'M03 000 si*d\r')
+bytearray(b'M03 0 si*d\r')
+bytearray(b'G01 X+258 Y+311 Z+300 R-002 ff*d\r')
+bytearray(b'G01 0 ff*v\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 ul*u\r')
+bytearray(b'G01 0 ul*o\r')
+Resetting position
+bytearray(b'M03 090 cp*d\r')
+bytearray(b'M03 0 cp*m\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 ta*}\r')
+bytearray(b'G01 0 ta*c\r')
+___POSITION___:  [0.25834007 0.31152985 0.01155192 0.08203884]
+___ANGLE___:  8.20388398319235
+___Z___:  5.7759606749218655
+___LENGTH___ 25.06871223449707
+___WIDTH___ 25.06871223449707
+bytearray(b'G01 X+258 Y+311 Z+055 R-002 eg*e\r')
+bytearray(b'G01 0 eg*t\r')
+bytearray(b'G01 X+258 Y+311 Z+005 R-002 lv*x\r')
+bytearray(b'G01 0 lv*l\r')
+bytearray(b'M03 000 id*s\r')
+bytearray(b'M03 0 id*s\r')
+bytearray(b'G01 X+258 Y+311 Z+300 R-002 qa*t\r')
+bytearray(b'G01 0 qa*f\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 nv*t\r')
+bytearray(b'G01 0 nv*n\r')
+Resetting position
+bytearray(b'M03 090 zv*{\r')
+bytearray(b'M03 0 zv*r\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 fb*l\r')
+bytearray(b'G01 0 fb*r\r')
+___POSITION___:  [-0.14990256  0.24839222  0.0187719  -0.13136318]
+___ANGLE___:  -13.136318068830708
+___Z___:  9.385949840302887
+___LENGTH___ 21.123735427856445
+___WIDTH___ 21.123735427856445
+bytearray(b'G01 X-149 Y+248 Z+059 R+004 ct*t\r')
+bytearray(b'G01 0 ct*a\r')
+bytearray(b'G01 X-149 Y+248 Z+009 R+004 fm*m\r')
+bytearray(b'G01 0 fm*}\r')
+bytearray(b'M03 000 wh*a\r')
+bytearray(b'M03 0 wh*a\r')
+bytearray(b'G01 X-149 Y+248 Z+300 R+004 ab*o\r')
+bytearray(b'G01 0 ab*u\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 ad*i\r')
+bytearray(b'G01 0 ad*s\r')
+Resetting position
+bytearray(b'M03 090 mx*b\r')
+bytearray(b'M03 0 mx*k\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 wc*|\r')
+bytearray(b'G01 0 wc*b\r')
+___POSITION___:  [0.25800916 0.31406109 0.01287727 0.08470391]
+___ANGLE___:  8.470390803313405
+___Z___:  6.438633889770506
+___LENGTH___ 27.942216873168945
+___WIDTH___ 27.942216873168945
+bytearray(b'G01 X+258 Y+314 Z+056 R-002 hv*\x7f\r')
+bytearray(b'G01 0 hv*h\r')
+bytearray(b'G01 X+258 Y+314 Z+006 R-002 nh*b\r')
+bytearray(b'G01 0 nh*p\r')
+bytearray(b'M03 000 jx*l\r')
+bytearray(b'M03 0 jx*l\r')
+bytearray(b'G01 X+258 Y+314 Z+300 R-002 ww*a\r')
+bytearray(b'G01 0 ww*v\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 wn*u\r')
+bytearray(b'G01 0 wn*o\r')
+Resetting position
+bytearray(b'M03 090 yg*i\r')
+bytearray(b'M03 0 yg*`\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 jd*f\r')
+bytearray(b'G01 0 jd*x\r')
+___POSITION___:  [2.75766665e-04 4.29952743e-01 1.27206858e-01 1.51330187e-02]
+___ANGLE___:  1.5133018726267626
+___Z___:  63.603429217745976
+___LENGTH___ 31.736705780029297
+___WIDTH___ 31.736705780029297
+bytearray(b'G01 X+000 Y+429 Z+113 R-000 aq*u\r')
+bytearray(b'G01 0 aq*f\r')
+bytearray(b'G01 X+000 Y+429 Z+063 R-000 mq*\x7f\r')
+bytearray(b'G01 0 mq*j\r')
+bytearray(b'M03 000 if*q\r')
+bytearray(b'M03 0 if*q\r')
+bytearray(b'G01 X+000 Y+429 Z+300 R-000 cg*a\r')
+bytearray(b'G01 0 cg*r\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 cj*e\r')
+bytearray(b'G01 0 cj*\x7f\r')
+Resetting position
+bytearray(b'M03 090 ug*e\r')
+bytearray(b'M03 0 ug*l\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 uk*v\r')
+bytearray(b'G01 0 uk*h\r')
+___POSITION___:  [ 2.39852696e-04  4.32084740e-01  1.28490720e-01 -1.43054880e-03]
+___ANGLE___:  -0.1430548798367634
+___Z___:  64.24535979642148
+___LENGTH___ 32.098228454589844
+___WIDTH___ 32.098228454589844
+bytearray(b'G01 X+000 Y+432 Z+114 R+000 zh*|\r')
+bytearray(b'G01 0 zh*d\r')
+bytearray(b'G01 X+000 Y+432 Z+064 R+000 xz*j\r')
+bytearray(b'G01 0 xz*t\r')
+bytearray(b'M03 000 ag*x\r')
+bytearray(b'M03 0 ag*x\r')
+bytearray(b'G01 X+000 Y+432 Z+300 R+000 in*n\r')
+bytearray(b'G01 0 in*q\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 nn*l\r')
+bytearray(b'G01 0 nn*v\r')
+Resetting position
+bytearray(b'M03 090 ob*z\r')
+bytearray(b'M03 0 ob*s\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 uo*r\r')
+bytearray(b'G01 0 uo*l\r')
+___POSITION___:  [0.25868524 0.31364549 0.01074005 0.09058595]
+___ANGLE___:  9.058594881736074
+___Z___:  5.370022878161629
+___LENGTH___ 28.416547775268555
+___WIDTH___ 28.416547775268555
+bytearray(b'G01 X+258 Y+313 Z+055 R-002 nq*z\r')
+bytearray(b'G01 0 nq*i\r')
+bytearray(b'G01 X+258 Y+313 Z+005 R-002 sq*b\r')
+bytearray(b'G01 0 sq*t\r')
+bytearray(b'M03 000 eh*s\r')
+bytearray(b'M03 0 eh*s\r')
+bytearray(b'G01 X+258 Y+313 Z+300 R-002 gk*j\r')
+bytearray(b'G01 0 gk*z\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 rr*l\r')
+bytearray(b'G01 0 rr*v\r')
+Resetting position
+bytearray(b'M03 090 tu*v\r')
+bytearray(b'M03 0 tu*\x7f\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 sf*}\r')
+bytearray(b'G01 0 sf*c\r')
+___POSITION___:  [-0.01744538  0.48081441  0.09386786 -0.94750332]
+___ANGLE___:  -94.75033170776655
+___Z___:  46.933929419944455
+___LENGTH___ 56.40467834472656
+___WIDTH___ 56.40467834472656
+bytearray(b'G01 X-017 Y+480 Z+096 R+029 hs*|\r')
+bytearray(b'G01 0 hs*m\r')
+bytearray(b'G01 X-017 Y+480 Z+046 R+029 hu*w\r')
+bytearray(b'G01 0 hu*k\r')
+bytearray(b'M03 000 mw*d\r')
+bytearray(b'M03 0 mw*d\r')
+bytearray(b'G01 X-017 Y+480 Z+300 R+029 pm*v\r')
+bytearray(b'G01 0 pm*k\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 vl*v\r')
+bytearray(b'G01 0 vl*l\r')
+Resetting position
+bytearray(b'M03 090 vx*y\r')
+bytearray(b'M03 0 vx*p\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 pe*}\r')
+bytearray(b'G01 0 pe*c\r')
+___POSITION___:  [-0.11822169  0.37861747  0.07119349  0.25601707]
+___ANGLE___:  25.601707495114866
+___Z___:  35.59674333882323
+___LENGTH___ 25.746700286865234
+___WIDTH___ 25.746700286865234
+bytearray(b'G01 X-118 Y+378 Z+085 R-007 pk*z\r')
+bytearray(b'G01 0 pk*m\r')
+bytearray(b'G01 X-118 Y+378 Z+035 R-007 eg*h\r')
+bytearray(b'G01 0 eg*t\r')
+bytearray(b'M03 000 ua*j\r')
+bytearray(b'M03 0 ua*j\r')
+bytearray(b'G01 X-118 Y+378 Z+300 R-007 bm*`\r')
+bytearray(b'G01 0 bm*y\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 gc*h\r')
+bytearray(b'G01 0 gc*r\r')
+Resetting position
+bytearray(b'M03 090 sa*e\r')
+bytearray(b'M03 0 sa*l\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 gf*i\r')
+bytearray(b'G01 0 gf*w\r')
+___POSITION___:  [-0.12364066  0.36854854  0.06059492  0.18600116]
+___ANGLE___:  18.600115909481715
+___Z___:  30.297460109353025
+___LENGTH___ 27.585506439208984
+___WIDTH___ 27.585506439208984
+bytearray(b'G01 X-123 Y+368 Z+080 R-005 mg*e\r')
+bytearray(b'G01 0 mg*|\r')
+bytearray(b'G01 X-123 Y+368 Z+030 R-005 lk*c\r')
+bytearray(b'G01 0 lk*q\r')
+bytearray(b'M03 000 rp*|\r')
+bytearray(b'M03 0 rp*|\r')
+bytearray(b'G01 X-123 Y+368 Z+300 R-005 wt*g\r')
+bytearray(b'G01 0 wt*u\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 va*{\r')
+bytearray(b'G01 0 va*a\r')
+Resetting position
+bytearray(b'M03 090 ox*`\r')
+bytearray(b'M03 0 ox*i\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 wz*e\r')
+bytearray(b'G01 0 wz*{\r')
+___POSITION___:  [-0.12872477  0.26855238  0.04635568  0.11103954]
+___ANGLE___:  11.10395419428962
+___Z___:  23.177839115505805
+___LENGTH___ 25.32262420654297
+___WIDTH___ 25.32262420654297
+bytearray(b'G01 X-128 Y+268 Z+073 R-003 zb*w\r')
+bytearray(b'G01 0 zb*n\r')
+bytearray(b'G01 X-128 Y+268 Z+023 R-003 le*c\r')
+bytearray(b'G01 0 le*\x7f\r')
+bytearray(b'M03 000 da*{\r')
+bytearray(b'M03 0 da*{\r')
+bytearray(b'G01 X-128 Y+268 Z+300 R-003 fi*g\r')
+bytearray(b'G01 0 fi*y\r')
+bytearray(b'G01 X-400 Y+200 Z+300 R+000 xo*{\r')
+bytearray(b'G01 0 xo*a\r')
+Resetting position
+bytearray(b'M03 090 mm*w\r')
+bytearray(b'M03 0 mm*~\r')
+bytearray(b'G01 X+000 Y+150 Z+300 R+000 oc*d\r')
+bytearray(b'G01 0 oc*z\r')
+___POSITION___:  [0.25807299 0.33494761 0.01518546 0.12313256]
+___ANGLE___:  12.313256382505035
+___Z___:  7.5927275525718425
+___LENGTH___ 29.3835506439209
+___WIDTH___ 29.3835506439209
+bytearray(b'G01 X+258 Y+334 Z+057 R-003 ud*r\r')
+bytearray(b'G01 0 ud*g\r')
+bytearray(b'G01 X+258 Y+334 Z+007 R-003 el*o\r')
+bytearray(b'G01 0 el*\x7f\r')
+
