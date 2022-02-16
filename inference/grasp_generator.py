@@ -86,7 +86,7 @@ class GraspGenerator:
         grasps = detect_grasps(q_img, ang_img, width_img,  no_grasps=10)
 
         if len(grasps) == 0:
-            return None
+            return None, None
 
         # Get grasp position from model output
         pos_z = depth[grasps[0].center[0] + self.cam_data.top_left[0],
