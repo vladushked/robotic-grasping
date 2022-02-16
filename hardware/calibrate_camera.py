@@ -134,8 +134,10 @@ class Calibration:
         for tool_position in calib_grid_pts:
             print('Requesting move to tool position: ', tool_position)
 
-            print(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 0)
-            self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 0)
+            self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 45)
+            time.sleep(1.5)
+            self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 45)
+            time.sleep(0.5)
             # self.s.coordinateRequest()
 
             # np.save(self.tool_position, tool_position)
@@ -143,7 +145,7 @@ class Calibration:
             # while not np.load(self.move_completed):
                 # time.sleep(0.1)
             # Wait for robot to be stable
-            time.sleep(2)
+            
 
             # Find checkerboard center
             checkerboard_size = (3, 3)
