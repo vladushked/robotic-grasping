@@ -41,7 +41,7 @@ class GraspGenerator:
                                    height=self.height,
                                    output_size=self.output_size,
                                    include_depth=True,
-                                   include_rgb=True)
+                                   include_rgb=False)
 
         # Connect to camera
         self.camera.connect()
@@ -77,8 +77,6 @@ class GraspGenerator:
         depth = image_bundle['aligned_depth']
         x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
 
-        if self.only_depth :
-            x = depth_img
         # Predict the grasp pose using the saved model
         with torch.no_grad():
             xc = x.to(self.device)
