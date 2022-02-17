@@ -17,7 +17,8 @@ from RAS_Com import RAS_Connect
 
 
 class GraspGenerator:
-    def __init__(self, saved_model_path, cam_id, visualize=False, enable_arm=False, only_depth=False):
+    def __init__(self, saved_model_path, cam_id, visualize=False, enable_arm=False, include_depth=True,
+                                   include_rgb=True):
         self.saved_model_path = saved_model_path
 
         self.width = 640
@@ -26,7 +27,6 @@ class GraspGenerator:
         self.grip_height = 0.5
 
         self.enable_arm = enable_arm
-        self.only_depth = only_depth
 
         self.camera = RealSenseCamera(device_id=cam_id,
                                       width=self.width,
@@ -40,8 +40,8 @@ class GraspGenerator:
         self.cam_data = CameraData(width=self.width,
                                    height=self.height,
                                    output_size=self.output_size,
-                                   include_depth=True,
-                                   include_rgb=False)
+                                   include_depth=include_depth,
+                                   include_rgb=include_rgb)
 
         # Connect to camera
         self.camera.connect()
@@ -51,10 +51,10 @@ class GraspGenerator:
         self.cam_depth_scale = np.loadtxt(
             'saved_data/camera_depth_scale.txt', delimiter=' ')
 
-        homedir = os.path.join(os.path.expanduser('~'), "grasp-comms")
-        self.grasp_request = os.path.join(homedir, "grasp_request.npy")
-        self.grasp_available = os.path.join(homedir, "grasp_available.npy")
-        self.grasp_pose = os.path.join(homedir, "grasp_pose.npy")
+        # homedir = os.path.join(os.path.expanduser('~'), "grasp-comms")
+        # self.grasp_request = os.path.join(homedir, "grasp_request.npy")
+        # self.grasp_available = os.path.join(homedir, "grasp_available.npy")
+        # self.grasp_pose = os.path.join(homedir, "grasp_pose.npy")
 
         if visualize:
             self.fig = plt.figure(figsize=(10, 10))
