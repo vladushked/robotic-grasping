@@ -17,7 +17,7 @@ from RAS_Com import RAS_Connect
 
 
 class GraspGenerator:
-    def __init__(self, saved_model_path, cam_id, visualize=False, enable_arm=False):
+    def __init__(self, saved_model_path, cam_id, visualize=False, enable_arm=False, only_depth=False):
         self.saved_model_path = saved_model_path
 
         self.width = 640
@@ -26,6 +26,7 @@ class GraspGenerator:
         self.grip_height = 0.5
 
         self.enable_arm = enable_arm
+        self.only_depth = only_depth
 
         self.camera = RealSenseCamera(device_id=cam_id,
                                       width=self.width,
@@ -76,6 +77,8 @@ class GraspGenerator:
         depth = image_bundle['aligned_depth']
         x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
 
+        if self.only_depth :
+            x = depth_img
         # Predict the grasp pose using the saved model
         with torch.no_grad():
             xc = x.to(self.device)
@@ -126,12 +129,12 @@ class GraspGenerator:
             #            grasp_width_img=width_img)
 
             plot_results(fig=self.fig,
-                        rgb_img=self.cam_data.get_rgb(rgb, False),
-                        depth_img=np.squeeze(self.cam_data.get_depth(depth)),
-                        grasp_q_img=q_img,
-                        grasp_angle_img=ang_img,
-                        no_grasps=10,
-                        grasp_width_img=width_img)
+                         rgb_img=self.cam_data.get_rgb(rgb, False),
+                         depth_img=np.squeeze(self.cam_data.get_depth(depth)),
+                         grasp_q_img=q_img,
+                         grasp_angle_img=ang_img,
+                         no_grasps=10,
+                         grasp_width_img=width_img)
 
         return grasp_pose, grasps[0].width
 
@@ -146,7 +149,7 @@ class GraspGenerator:
                 tool_position, grasp_width = self.generate()
                 if tool_position is None:
                     continue
-                
+
                 z = tool_position[2] * 0.5
                 if tool_position[2] > self.grip_height:
                     z = tool_position[2] - self.grip_height * 0.5
@@ -156,18 +159,21 @@ class GraspGenerator:
                 print("___LENGTH___", grasp_width)
                 print("___WIDTH___", grasp_width)
                 # self.s.grip()
-                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, z * 1000 + 50, - tool_position[3] * 100 * 0.5 * 0.62)
+                self.s.effectorMovement(
+                    tool_position[0] * 1000, tool_position[1] * 1000, z * 1000 + 50, - tool_position[3] * 100 * 0.5 * 0.62)
                 # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
                 time.sleep(2)
-                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, z * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
+                self.s.effectorMovement(
+                    tool_position[0] * 1000, tool_position[1] * 1000, z * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
                 time.sleep(2)
                 self.s.grip(0)
                 time.sleep(2)
-                self.s.effectorMovement(tool_position[0] * 1000, tool_position[1] * 1000, 300, - tool_position[3] * 100 * 0.5 * 0.62)
+                self.s.effectorMovement(
+                    tool_position[0] * 1000, tool_position[1] * 1000, 300, - tool_position[3] * 100 * 0.5 * 0.62)
                 time.sleep(2)
                 self.s.effectorMovement(-400, 200, 300, 0)
                 time.sleep(2)
-                
+
         else:
             while(True):
                 tool_position = self.generate()
