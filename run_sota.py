@@ -121,7 +121,7 @@ def make_model(config):
 if __name__ == '__main__':
     
 
-    config_path = 'trained-models/model_last.pth.tar'
+    config_path = 'trained-models/det_seg_OCID.ini'
     model_path = 'trained-models/model_last.pth.tar'
 
     # Load configuration
