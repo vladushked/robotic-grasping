@@ -15,6 +15,8 @@ from utils.visualisation.plot import plot_grasp, plot_results
 
 from RAS_Com import RAS_Connect
 
+from grasp_det_seg.utils.parallel import PackedSequence
+
 
 class SotaGenerator:
     def __init__(self, model, cam_id, visualize=False, enable_arm=False, include_depth=True,
@@ -73,9 +75,8 @@ class SotaGenerator:
         # Predict the grasp pose using the saved model
         with torch.no_grad():
             xc = x.to(self.device)
-            xc = torch.nn.utils.rnn.pad_sequence([xc], batch_first=True)
             # Run network
-            _, pred, conf = self.model(img=torch.nn.utils.rnn.pack_padded_sequence(xc, lengths=[1], batch_first=True), do_loss=False, do_prediction=True)
+            _, pred, conf = self.model(img=PackedSequence(xc), do_loss=False, do_prediction=True)
             # pred = self.model.predict(xc)
         
         return None, None
