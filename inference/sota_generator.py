@@ -75,7 +75,7 @@ class SotaGenerator:
             xc = x.to(self.device)
             xc = torch.nn.utils.rnn.pad_sequence([xc], batch_first=True)
             # Run network
-            _, pred, conf = self.model(img=xc, do_loss=False, do_prediction=True)
+            _, pred, conf = self.model(img=torch.nn.utils.rnn.pack_padded_sequence(xc, lengths=[1], batch_first=True), do_loss=False, do_prediction=True)
             # pred = self.model.predict(xc)
         
         return None, None
