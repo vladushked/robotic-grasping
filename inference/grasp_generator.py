@@ -85,6 +85,21 @@ class GraspGenerator:
         q_img, ang_img, width_img = post_process_output(
             pred['pos'], pred['cos'], pred['sin'], pred['width'])
         grasps = detect_grasps(q_img, ang_img, width_img,  no_grasps=10)
+        
+        print(len(grasps))
+        if self.fig:
+            # plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, grasp_q_img=q_img,
+            #            grasp_angle_img=ang_img,
+            #            no_grasps=10,
+            #            grasp_width_img=width_img)
+
+            plot_results(fig=self.fig,
+                         rgb_img=self.cam_data.get_rgb(rgb, False),
+                         depth_img=np.squeeze(self.cam_data.get_depth(depth)),
+                         grasp_q_img=q_img,
+                         grasp_angle_img=ang_img,
+                         no_grasps=10,
+                         grasp_width_img=width_img)
 
         if len(grasps) == 0:
             return None, None
@@ -120,19 +135,7 @@ class GraspGenerator:
 
         # print('grasp_pose: ', grasp_pose)
 
-        if self.fig:
-            # plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, grasp_q_img=q_img,
-            #            grasp_angle_img=ang_img,
-            #            no_grasps=10,
-            #            grasp_width_img=width_img)
-
-            plot_results(fig=self.fig,
-                         rgb_img=self.cam_data.get_rgb(rgb, False),
-                         depth_img=np.squeeze(self.cam_data.get_depth(depth)),
-                         grasp_q_img=q_img,
-                         grasp_angle_img=ang_img,
-                         no_grasps=10,
-                         grasp_width_img=width_img)
+        
 
         return grasp_pose, grasps[0].width
 

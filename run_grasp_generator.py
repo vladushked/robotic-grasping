@@ -5,7 +5,7 @@ if __name__ == '__main__':
         cam_id=830112070066,
         saved_model_path='trained-models/jacquard-rgbd-grconvnet3-drop0-ch32/epoch_48_iou_0.93',
         visualize=True,
-        enable_arm=False,
+        enable_arm=True,
         include_depth=True,
         include_rgb=True
     )
