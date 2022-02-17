@@ -6,7 +6,7 @@ if __name__ == '__main__':
         saved_model_path='trained-models/jacquard-d-grconvnet3-drop0-ch32/epoch_50_iou_0.94',
         visualize=True,
         enable_arm=True,
-        only_depth=False,
+        only_depth=True,
     )
     generator.load_model()
     generator.run()
