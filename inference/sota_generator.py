@@ -68,11 +68,12 @@ class SotaGenerator:
         rgb = image_bundle['rgb']
         depth = image_bundle['aligned_depth']
         x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
-        print(x.shape)
+        
 
         # Predict the grasp pose using the saved model
         with torch.no_grad():
             xc = x.to(self.device)
+            xc = torch.nn.utils.rnn.pad_sequence([xc], batch_first=True)
             # Run network
             _, pred, conf = self.model(img=xc, do_loss=False, do_prediction=True)
             # pred = self.model.predict(xc)
