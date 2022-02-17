@@ -138,7 +138,7 @@ if __name__ == '__main__':
         model=model,
         visualize=True,
         enable_arm=False,
-        include_depth=True,
-        include_rgb=False
+        include_depth=False,
+        include_rgb=True
     )
     generator.run()
