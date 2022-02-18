@@ -82,8 +82,12 @@ class SotaGenerator:
 
             sem_pred = np.asarray(
                 sem_pred.detach().cpu().numpy(), dtype=np.uint8)
+            print("sem_pred", sem_pred)
             if bbx_pred is None:
                 continue
+            print("bbx_pred", bbx_pred)
+            print("cls_pred", cls_pred)
+            print("obj_pred", obj_pred)
 
             img_best_boxes = np.copy(img)
             best_confidence = 0.
@@ -131,7 +135,6 @@ class SotaGenerator:
             dim = (width, height)
             # resize image
             resized = cv2.resize(res, dim, interpolation=cv2.INTER_AREA)
-            print("About to show")
             cv2.imshow("Result", resized)
             cv2.waitKey(0)
 
