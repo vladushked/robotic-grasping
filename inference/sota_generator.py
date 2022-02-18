@@ -121,14 +121,15 @@ class SotaGenerator:
                             best_confidence = obj_pred_i.item()
                             r_bbox_best = r_bbox_
 
-                        cv2.line(img_best_boxes, tuple(r_bbox_[0]), tuple(
-                            r_bbox_[1]), (255, 0, 0), 2)
-                        cv2.line(img_best_boxes, tuple(r_bbox_[1]), tuple(
-                            r_bbox_[2]), (0, 0, 255), 2)
-                        cv2.line(img_best_boxes, tuple(r_bbox_[2]), tuple(
-                            r_bbox_[3]), (255, 0, 0), 2)
-                        cv2.line(img_best_boxes, tuple(r_bbox_[3]), tuple(
-                            r_bbox_[0]), (0, 0, 255), 2)
+                if r_bbox_best is not None:
+                    cv2.line(img_best_boxes, tuple(r_bbox_best[0]), tuple(
+                        r_bbox_best[1]), (255, 0, 0), 2)
+                    cv2.line(img_best_boxes, tuple(r_bbox_best[1]), tuple(
+                        r_bbox_best[2]), (0, 0, 255), 2)
+                    cv2.line(img_best_boxes, tuple(r_bbox_best[2]), tuple(
+                        r_bbox_best[3]), (255, 0, 0), 2)
+                    cv2.line(img_best_boxes, tuple(r_bbox_best[3]), tuple(
+                        r_bbox_best[0]), (0, 0, 255), 2)
 
             res = np.hstack((img, img_best_boxes))
             print("res.shape" ,res.shape)
