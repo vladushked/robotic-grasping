@@ -86,13 +86,9 @@ class SotaGenerator:
                 sem_pred.detach().cpu().numpy(), dtype=np.uint8)
             cv2.imshow("sem_pred", sem_pred)
             
-            print("sem_pred", sem_pred)
             print("sem_pred_max", sem_pred.max())
             if bbx_pred is None:
                 continue
-            print("bbx_pred", bbx_pred)
-            print("cls_pred", cls_pred)
-            print("obj_pred", obj_pred)
 
             img_best_boxes = np.copy(img)
             best_confidence = 0.
@@ -141,8 +137,8 @@ class SotaGenerator:
             height = int(res.shape[0] * scale_percent / 100)
             dim = (width, height)
             # resize image
-            resized = cv2.resize(res, dim, interpolation=cv2.INTER_AREA)
-            cv2.imshow("Result", resized)
+            # resized = cv2.resize(res, dim, interpolation=cv2.INTER_AREA)
+            cv2.imshow("Result", res)
             cv2.waitKey(0)
 
     def generate(self):
@@ -165,7 +161,6 @@ class SotaGenerator:
         # x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
         print(img_.shape)
         # rgb = rgb_img.transpose((1, 2, 0))
-        print(rgb)
         cv2.imshow("rgb", rgb)
         # cv2.imshow("x", x)
         # print(x[0].shape)
@@ -177,7 +172,7 @@ class SotaGenerator:
             _, pred, conf = self.model(img=PackedSequence(img_), do_loss=False, do_prediction=True)
             # pred = self.model.predict(xc)
         
-        self.show_prediction_image(rgb, pred)
+        self.show_prediction_image(im_rgb, pred)
 
         return None, None
 
