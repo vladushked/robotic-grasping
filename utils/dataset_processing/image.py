@@ -55,7 +55,7 @@ class Image:
         Normalise the image by converting to float [0,1] and zero-centering
         """
         self.img = self.img.astype(np.float32) / 255.0
-        self.img -= self.img.mean()
+        # self.img -= self.img.mean()
 
     def resize(self, shape):
         """

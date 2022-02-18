@@ -148,6 +148,7 @@ class SotaGenerator:
         x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
         print(rgb_img.shape)
         rgb = rgb_img.transpose((1, 2, 0))
+        print(rgb)
         cv2.imshow("rgb", rgb)
         # cv2.imshow("x", x)
         print(x[0].shape)
