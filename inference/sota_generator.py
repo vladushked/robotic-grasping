@@ -85,6 +85,7 @@ class SotaGenerator:
             cv2.imshow("sem_pred", sem_pred)
             
             print("sem_pred", sem_pred)
+            print("sem_pred_max", sem_pred.max())
             if bbx_pred is None:
                 continue
             print("bbx_pred", bbx_pred)
