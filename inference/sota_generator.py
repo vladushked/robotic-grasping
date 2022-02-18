@@ -138,7 +138,7 @@ class SotaGenerator:
             # resize image
             resized = cv2.resize(res, dim, interpolation=cv2.INTER_AREA)
             cv2.imshow("Result", resized)
-            cv2.waitKey(0)
+            cv2.waitKey(1)
 
     def generate(self):
         # Get RGB-D image from camera
@@ -147,8 +147,8 @@ class SotaGenerator:
         depth = image_bundle['aligned_depth']
         x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
         print(rgb_img.shape)
-        
-        cv2.imshow("rgb", rgb_img.transpose((1, 2, 0)))
+        rgb = rgb_img.transpose((1, 2, 0))
+        cv2.imshow("rgb", rgb)
         # cv2.imshow("x", x)
         print(x[0].shape)
 
