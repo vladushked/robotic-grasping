@@ -74,7 +74,7 @@ class SotaGenerator:
 
         num_classes_theta = 18
         # grasp candidate confidence threshold
-        threshold = 0.06
+        threshold = 0.5
 
         iou_seg_threshold = 100  # in px
 
