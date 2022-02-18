@@ -25,7 +25,7 @@ class SotaGenerator:
 
         self.width = 640
         self.height = 480
-        self.output_size = 350
+        self.output_size = 200
         self.grip_height = 0.5
 
         self.enable_arm = enable_arm
@@ -92,41 +92,43 @@ class SotaGenerator:
             img_best_boxes = np.copy(img)
             best_confidence = 0.
             r_bbox_best = None
+            cls_labels = np.unique(sem_pred)
 
-            for bbx_pred_i, cls_pred_i, obj_pred_i in zip(bbx_pred, cls_pred, obj_pred):
-                if obj_pred_i.item() > threshold:
+            for label in cls_labels:
+                for bbx_pred_i, cls_pred_i, obj_pred_i in zip(bbx_pred, cls_pred, obj_pred):
+                    if obj_pred_i.item() > threshold:
 
-                    pt1 = (int(bbx_pred_i[0]), int(bbx_pred_i[1]))
-                    pt2 = (int(bbx_pred_i[2]), int(bbx_pred_i[3]))
-                    cls = cls_pred_i.item()
-                    if cls > 17:
-                        assert False
+                        pt1 = (int(bbx_pred_i[0]), int(bbx_pred_i[1]))
+                        pt2 = (int(bbx_pred_i[2]), int(bbx_pred_i[3]))
+                        cls = cls_pred_i.item()
+                        if cls > 17:
+                            assert False
 
-                    theta = ((180 / num_classes_theta) * cls) + 5
-                    pts = scipy.array([[pt1[0], pt1[1]], [pt2[0], pt1[1]], [
-                                      pt2[0], pt2[1]], [pt1[0], pt2[1]]])
-                    cnt = scipy.array([(int(bbx_pred_i[0]) + int(bbx_pred_i[2])) / 2,
-                                       (int(bbx_pred_i[1]) + int(bbx_pred_i[3])) / 2])
-                    r_bbox_ = self.Rotate2D(pts, cnt, 90 - theta)
-                    r_bbox_ = r_bbox_.astype('int16')
+                        theta = ((180 / num_classes_theta) * cls) + 5
+                        pts = scipy.array([[pt1[0], pt1[1]], [pt2[0], pt1[1]], [
+                                        pt2[0], pt2[1]], [pt1[0], pt2[1]]])
+                        cnt = scipy.array([(int(bbx_pred_i[0]) + int(bbx_pred_i[2])) / 2,
+                                        (int(bbx_pred_i[1]) + int(bbx_pred_i[3])) / 2])
+                        r_bbox_ = self.Rotate2D(pts, cnt, 90 - theta)
+                        r_bbox_ = r_bbox_.astype('int16')
 
-                    if (int(cnt[1]) >= self.width) or (int(cnt[0]) >= self.height):
-                        continue
+                        if (int(cnt[1]) >= self.width) or (int(cnt[0]) >= self.height):
+                            continue
 
-                    
-                    if obj_pred_i.item() >= best_confidence:
-                        best_confidence = obj_pred_i.item()
-                        r_bbox_best = r_bbox_
+                        
+                        if obj_pred_i.item() >= best_confidence:
+                            best_confidence = obj_pred_i.item()
+                            r_bbox_best = r_bbox_
 
-            if r_bbox_best is not None:
-                cv2.line(img_best_boxes, tuple(r_bbox_best[0]), tuple(
-                    r_bbox_best[1]), (255, 0, 0), 2)
-                cv2.line(img_best_boxes, tuple(r_bbox_best[1]), tuple(
-                    r_bbox_best[2]), (0, 0, 255), 2)
-                cv2.line(img_best_boxes, tuple(r_bbox_best[2]), tuple(
-                    r_bbox_best[3]), (255, 0, 0), 2)
-                cv2.line(img_best_boxes, tuple(r_bbox_best[3]), tuple(
-                    r_bbox_best[0]), (0, 0, 255), 2)
+                if r_bbox_best is not None:
+                    cv2.line(img_best_boxes, tuple(r_bbox_best[0]), tuple(
+                        r_bbox_best[1]), (255, 0, 0), 2)
+                    cv2.line(img_best_boxes, tuple(r_bbox_best[1]), tuple(
+                        r_bbox_best[2]), (0, 0, 255), 2)
+                    cv2.line(img_best_boxes, tuple(r_bbox_best[2]), tuple(
+                        r_bbox_best[3]), (255, 0, 0), 2)
+                    cv2.line(img_best_boxes, tuple(r_bbox_best[3]), tuple(
+                        r_bbox_best[0]), (0, 0, 255), 2)
 
             res = np.hstack((img, img_best_boxes))
             scale_percent = 75  # percent of original size
