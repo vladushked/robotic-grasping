@@ -149,7 +149,6 @@ class SotaGenerator:
             # Run network
             _, pred, conf = self.model(img=PackedSequence(
                 xc), do_loss=False, do_prediction=True)
-            print(pred.shape)
             # pred = self.model.predict(xc)
         
         self.show_prediction_image(rgb, pred)
