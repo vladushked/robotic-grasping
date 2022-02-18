@@ -146,6 +146,8 @@ class SotaGenerator:
         rgb = image_bundle['rgb']
         depth = image_bundle['aligned_depth']
         x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
+        cv2.imshow("rgb", rgb_img)
+        cv2.imshow("x", x)
         print(x[0].shape)
 
         # Predict the grasp pose using the saved model
@@ -156,7 +158,7 @@ class SotaGenerator:
                 xc), do_loss=False, do_prediction=True)
             # pred = self.model.predict(xc)
         
-        self.show_prediction_image(rgb, pred)
+        self.show_prediction_image(x, pred)
 
         return None, None
 
