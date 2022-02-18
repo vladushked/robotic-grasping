@@ -1,6 +1,7 @@
 import os
 import time
 import cv2
+import scipy
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,7 +21,7 @@ from grasp_det_seg.utils.parallel import PackedSequence
 
 class SotaGenerator:
     def __init__(self, model, cam_id, visualize=False, enable_arm=False, include_depth=True,
-                                   include_rgb=True):
+                 include_rgb=True):
 
         self.width = 640
         self.height = 480
@@ -64,6 +65,76 @@ class SotaGenerator:
         if self.enable_arm:
             self.s = RAS_Connect('/dev/ttyTHS0')
 
+    def Rotate2D(self, pts, cnt, ang):
+        ang = np.deg2rad(ang)
+        return scipy.dot(pts - cnt, scipy.array([[scipy.cos(ang), scipy.sin(ang)], [-scipy.sin(ang),
+                                                                                    scipy.cos(ang)]])) + cnt
+
+    def show_prediction_image(self, img, raw_pred):
+
+        num_classes_theta = 18
+        # grasp candidate confidence threshold
+        threshold = 0.06
+
+        iou_seg_threshold = 100  # in px
+
+        for (sem_pred, bbx_pred, cls_pred, obj_pred) in zip(raw_pred["sem_pred"], raw_pred["bbx_pred"], raw_pred["cls_pred"], raw_pred["obj_pred"]):
+
+            sem_pred = np.asarray(
+                sem_pred.detach().cpu().numpy(), dtype=np.uint8)
+            if bbx_pred is None:
+                continue
+
+            img_best_boxes = np.copy(img)
+            best_confidence = 0.
+            r_bbox_best = None
+
+            for bbx_pred_i, cls_pred_i, obj_pred_i in zip(bbx_pred, cls_pred, obj_pred):
+                if obj_pred_i.item() > threshold:
+
+                    pt1 = (int(bbx_pred_i[0]), int(bbx_pred_i[1]))
+                    pt2 = (int(bbx_pred_i[2]), int(bbx_pred_i[3]))
+                    cls = cls_pred_i.item()
+                    if cls > 17:
+                        assert False
+
+                    theta = ((180 / num_classes_theta) * cls) + 5
+                    pts = scipy.array([[pt1[0], pt1[1]], [pt2[0], pt1[1]], [
+                                      pt2[0], pt2[1]], [pt1[0], pt2[1]]])
+                    cnt = scipy.array([(int(bbx_pred_i[0]) + int(bbx_pred_i[2])) / 2,
+                                       (int(bbx_pred_i[1]) + int(bbx_pred_i[3])) / 2])
+                    r_bbox_ = self.Rotate2D(pts, cnt, 90 - theta)
+                    r_bbox_ = r_bbox_.astype('int16')
+
+                    if (int(cnt[1]) >= self.width) or (int(cnt[0]) >= self.height):
+                        continue
+
+                    
+                    if obj_pred_i.item() >= best_confidence:
+                        best_confidence = obj_pred_i.item()
+                        r_bbox_best = r_bbox_
+
+            if r_bbox_best is not None:
+                cv2.line(img_best_boxes, tuple(r_bbox_best[0]), tuple(
+                    r_bbox_best[1]), (255, 0, 0), 2)
+                cv2.line(img_best_boxes, tuple(r_bbox_best[1]), tuple(
+                    r_bbox_best[2]), (0, 0, 255), 2)
+                cv2.line(img_best_boxes, tuple(r_bbox_best[2]), tuple(
+                    r_bbox_best[3]), (255, 0, 0), 2)
+                cv2.line(img_best_boxes, tuple(r_bbox_best[3]), tuple(
+                    r_bbox_best[0]), (0, 0, 255), 2)
+
+            res = np.hstack((img, img_best_boxes))
+            scale_percent = 75  # percent of original size
+            width = int(res.shape[1] * scale_percent / 100)
+            height = int(res.shape[0] * scale_percent / 100)
+            dim = (width, height)
+            # resize image
+            resized = cv2.resize(res, dim, interpolation=cv2.INTER_AREA)
+            cv2.imshow("Result", resized)
+            cv2.waitKey(0)
+            return
+
     def generate(self):
         # Get RGB-D image from camera
         image_bundle = self.camera.get_image_bundle()
@@ -76,15 +147,19 @@ class SotaGenerator:
         with torch.no_grad():
             xc = x[0].to(self.device)
             # Run network
-            _, pred, conf = self.model(img=PackedSequence(xc), do_loss=False, do_prediction=True)
+            _, pred, conf = self.model(img=PackedSequence(
+                xc), do_loss=False, do_prediction=True)
+            print(pred.shape)
             # pred = self.model.predict(xc)
         
+        self.show_prediction_image(rgb, pred)
+
         return None, None
 
         q_img, ang_img, width_img = post_process_output(
             pred['pos'], pred['cos'], pred['sin'], pred['width'])
         grasps = detect_grasps(q_img, ang_img, width_img,  no_grasps=10)
-        
+
         if self.fig:
             # plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, grasp_q_img=q_img,
             #            grasp_angle_img=ang_img,
@@ -132,8 +207,6 @@ class SotaGenerator:
         grasp_pose = np.append(target_position, target_angle[2])
 
         # print('grasp_pose: ', grasp_pose)
-
-        
 
         return grasp_pose, grasps[0].width
 
