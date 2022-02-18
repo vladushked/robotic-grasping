@@ -14,6 +14,8 @@ from utils.data.camera_data import CameraData
 from utils.dataset_processing.grasp import detect_grasps
 from utils.visualisation.plot import plot_grasp, plot_results
 
+from grasp_det_seg.data_OCID import iss_collate_fn, OCIDTestDataset, OCIDTestTransform
+
 from RAS_Com import RAS_Connect
 
 from grasp_det_seg.utils.parallel import PackedSequence
@@ -148,20 +150,28 @@ class SotaGenerator:
         image_bundle = self.camera.get_image_bundle()
         rgb = image_bundle['rgb']
         depth = image_bundle['aligned_depth']
-        x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
-        print(rgb_img.shape)
-        rgb = rgb_img.transpose((1, 2, 0))
+
+        # Validation dataloader
+        val_tf = OCIDTestTransform(self.height,
+                                self.width,
+                                (0.485, 0.456, 0.406),
+                                (0.229, 0.224, 0.225)
+                                )
+        im_rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
+        img_, im_size = val_tf(im_rgb)
+        # x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
+        print(img_.shape)
+        # rgb = rgb_img.transpose((1, 2, 0))
         print(rgb)
         cv2.imshow("rgb", rgb)
         # cv2.imshow("x", x)
-        print(x[0].shape)
+        # print(x[0].shape)
 
         # Predict the grasp pose using the saved model
         with torch.no_grad():
-            xc = x[0].to(self.device)
+            # xc = x[0].to(self.device)
             # Run network
-            _, pred, conf = self.model(img=PackedSequence(
-                xc), do_loss=False, do_prediction=True)
+            _, pred, conf = self.model(img=PackedSequence(img_), do_loss=False, do_prediction=True)
             # pred = self.model.predict(xc)
         
         self.show_prediction_image(rgb, pred)
