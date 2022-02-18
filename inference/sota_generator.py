@@ -74,7 +74,7 @@ class SotaGenerator:
 
         num_classes_theta = 18
         # grasp candidate confidence threshold
-        threshold = 0.5
+        threshold = 0.02
 
         iou_seg_threshold = 100  # in px
 
@@ -82,6 +82,8 @@ class SotaGenerator:
 
             sem_pred = np.asarray(
                 sem_pred.detach().cpu().numpy(), dtype=np.uint8)
+            cv2.imshow("sem_pred", sem_pred)
+            
             print("sem_pred", sem_pred)
             if bbx_pred is None:
                 continue
