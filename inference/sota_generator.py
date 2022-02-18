@@ -156,7 +156,7 @@ class SotaGenerator:
         im_rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
         bottom, right = self.cam_data.bottom_right
         top, left = self.cam_data.top_left
-        im_rgb = im_rgb[left:right, top:bottom,:]
+        im_rgb = im_rgb[ top:bottom, left:right,:]
         img_, im_size = val_tf(im_rgb)
         # x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
         print(img_.shape)
