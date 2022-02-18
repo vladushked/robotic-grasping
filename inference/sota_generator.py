@@ -131,9 +131,9 @@ class SotaGenerator:
             dim = (width, height)
             # resize image
             resized = cv2.resize(res, dim, interpolation=cv2.INTER_AREA)
+            print("About to show")
             cv2.imshow("Result", resized)
             cv2.waitKey(0)
-            return
 
     def generate(self):
         # Get RGB-D image from camera
