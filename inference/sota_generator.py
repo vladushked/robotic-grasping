@@ -120,17 +120,17 @@ class SotaGenerator:
                             best_confidence = obj_pred_i.item()
                             r_bbox_best = r_bbox_
 
-                if r_bbox_best is not None:
-                    cv2.line(img_best_boxes, tuple(r_bbox_best[0]), tuple(
-                        r_bbox_best[1]), (255, 0, 0), 2)
-                    cv2.line(img_best_boxes, tuple(r_bbox_best[1]), tuple(
-                        r_bbox_best[2]), (0, 0, 255), 2)
-                    cv2.line(img_best_boxes, tuple(r_bbox_best[2]), tuple(
-                        r_bbox_best[3]), (255, 0, 0), 2)
-                    cv2.line(img_best_boxes, tuple(r_bbox_best[3]), tuple(
-                        r_bbox_best[0]), (0, 0, 255), 2)
+                        cv2.line(img_best_boxes, tuple(r_bbox_[0]), tuple(
+                            r_bbox_[1]), (255, 0, 0), 2)
+                        cv2.line(img_best_boxes, tuple(r_bbox_[1]), tuple(
+                            r_bbox_[2]), (0, 0, 255), 2)
+                        cv2.line(img_best_boxes, tuple(r_bbox_[2]), tuple(
+                            r_bbox_[3]), (255, 0, 0), 2)
+                        cv2.line(img_best_boxes, tuple(r_bbox_[3]), tuple(
+                            r_bbox_[0]), (0, 0, 255), 2)
 
             res = np.hstack((img, img_best_boxes))
+            print("res.shape" ,res.shape)
             scale_percent = 75  # percent of original size
             width = int(res.shape[1] * scale_percent / 100)
             height = int(res.shape[0] * scale_percent / 100)
@@ -146,8 +146,10 @@ class SotaGenerator:
         rgb = image_bundle['rgb']
         depth = image_bundle['aligned_depth']
         x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
-        # cv2.imshow("rgb", rgb_img)
-        cv2.imshow("x", x)
+        print(rgb_img.shape)
+        
+        cv2.imshow("rgb", rgb_img.transpose((1, 2, 0)))
+        # cv2.imshow("x", x)
         print(x[0].shape)
 
         # Predict the grasp pose using the saved model
@@ -158,7 +160,7 @@ class SotaGenerator:
                 xc), do_loss=False, do_prediction=True)
             # pred = self.model.predict(xc)
         
-        self.show_prediction_image(x, pred)
+        self.show_prediction_image(rgb, pred)
 
         return None, None
 
