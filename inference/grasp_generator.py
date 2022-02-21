@@ -24,8 +24,8 @@ class GraspGenerator:
         self.width = 640
         self.height = 480
         self.output_size = 350
-        self.output_width = 600
-        self.output_height = 250
+        self.output_width = 580
+        self.output_height = 220
         self.grip_height = 0.5
 
         self.enable_arm = enable_arm
