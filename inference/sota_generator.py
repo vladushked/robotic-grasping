@@ -91,6 +91,7 @@ class SotaGenerator:
                 continue
 
             img_best_boxes = np.copy(img)
+            img_all_boxes = np.copy(img)
             best_confidence = 0.
             r_bbox_best = None
             cls_labels = np.unique(sem_pred)
@@ -116,7 +117,15 @@ class SotaGenerator:
                         if (int(cnt[1]) >= self.width) or (int(cnt[0]) >= self.height):
                             continue
 
-                        
+                        cv2.line(img_all_boxes, tuple(r_bbox_[0]), tuple(
+                            r_bbox_[1]), (255, 0, 0), 2)
+                        cv2.line(img_all_boxes, tuple(r_bbox_[1]), tuple(
+                            r_bbox_[2]), (0, 0, 255), 2)
+                        cv2.line(img_all_boxes, tuple(r_bbox_[2]), tuple(
+                            r_bbox_[3]), (255, 0, 0), 2)
+                        cv2.line(img_all_boxes, tuple(r_bbox_[3]), tuple(
+                            r_bbox_[0]), (0, 0, 255), 2)
+
                         if obj_pred_i.item() >= best_confidence:
                             best_confidence = obj_pred_i.item()
                             r_bbox_best = r_bbox_
@@ -131,7 +140,7 @@ class SotaGenerator:
                     cv2.line(img_best_boxes, tuple(r_bbox_best[3]), tuple(
                         r_bbox_best[0]), (0, 0, 255), 2)
 
-            res = np.hstack((img, img_best_boxes))
+            res = np.hstack((img, img_best_boxes, img_all_boxes))
             print("res.shape" ,res.shape)
             scale_percent = 75  # percent of original size
             width = int(res.shape[1] * scale_percent / 100)
