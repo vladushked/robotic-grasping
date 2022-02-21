@@ -12,6 +12,8 @@ class CameraData:
                  width=640,
                  height=480,
                  output_size=224,
+                 output_width=224,
+                 output_height=224,
                  include_depth=True,
                  include_rgb=True
                  ):
@@ -21,16 +23,18 @@ class CameraData:
         :param include_rgb: Whether RGB image is included
         """
         self.output_size = output_size
+        self.output_width = output_width
+        self.output_height = output_height
         self.include_depth = include_depth
         self.include_rgb = include_rgb
 
         if include_depth is False and include_rgb is False:
             raise ValueError('At least one of Depth or RGB must be specified.')
 
-        left = (width - output_size) // 2
-        top = (height - output_size) // 2
-        right = (width + output_size) // 2
-        bottom = (height + output_size) // 2
+        left = (width - output_width) // 2
+        top = (height - output_height) // 2
+        right = (width + output_width) // 2
+        bottom = (height + output_height) // 2
 
         self.bottom_right = (bottom, right)
         self.top_left = (top, left)

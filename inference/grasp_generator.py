@@ -24,6 +24,8 @@ class GraspGenerator:
         self.width = 640
         self.height = 480
         self.output_size = 350
+        self.output_width = 600
+        self.output_height = 250
         self.grip_height = 0.5
 
         self.enable_arm = enable_arm
@@ -40,6 +42,8 @@ class GraspGenerator:
         self.cam_data = CameraData(width=self.width,
                                    height=self.height,
                                    output_size=self.output_size,
+                                   output_width=self.output_width,
+                                   output_height=self.output_height,
                                    include_depth=include_depth,
                                    include_rgb=include_rgb)
 
