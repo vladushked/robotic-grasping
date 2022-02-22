@@ -7,7 +7,10 @@ if __name__ == '__main__':
         visualize=True,
         enable_arm=True,
         include_depth=True,
-        include_rgb=True
+        include_rgb=True,
+        conveyor_speed=0.5,
+        conveyor_direction="r_to_l",
+        # conveyor_direction="l_to_r",
     )
     generator.load_model()
     generator.run()
