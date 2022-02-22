@@ -18,7 +18,7 @@ from RAS_Com import RAS_Connect
 
 class GraspGenerator:
     def __init__(self, saved_model_path, cam_id, visualize=False, enable_arm=False, include_depth=True,
-                                   include_rgb=True):
+                                   include_rgb=True, conveyor_speed=0.0, conveyor_direction="r_to_l"):
         self.saved_model_path = saved_model_path
 
         self.width = 640
@@ -27,6 +27,8 @@ class GraspGenerator:
         self.output_width = 580
         self.output_height = 220
         self.grip_height = 0.5
+        self.conveyor_speed = conveyor_speed
+        self.conveyor_direction = conveyor_direction
 
         self.enable_arm = enable_arm
 
@@ -128,6 +130,7 @@ class GraspGenerator:
         camera2robot = self.cam_pose
         target_position = np.dot(
             camera2robot[0:3, 0:3], target) + camera2robot[0:3, 3:]
+        
         target_position = target_position[0:3, 0]
 
         # Convert camera to robot angle
