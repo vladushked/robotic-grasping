@@ -8,7 +8,7 @@ if __name__ == '__main__':
         enable_arm=True,
         include_depth=True,
         include_rgb=True,
-        # conveyor_speed=0.1,
+        conveyor_speed=0.1,
     )
     generator.load_model()
     generator.run()

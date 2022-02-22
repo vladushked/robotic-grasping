@@ -26,8 +26,8 @@ class GraspGenerator:
         self.output_size = 350
         self.output_width = 300
         self.output_height = 300
-        self.top_left = (150, 100)
-        self.bottom_right = (330, 540)
+        self.top_left = (150, 200)
+        self.bottom_right = (330, 640)
         self.grip_height = 0.5
         self.conveyor_speed = conveyor_speed
 
@@ -160,7 +160,7 @@ class GraspGenerator:
                 print("Resetting position")
                 self.s.grip(90)
                 time.sleep(2)
-                self.s.effectorMovement(0, 150, 300, 0)
+                self.s.effectorMovement(-20, 200, 200, 0)
                 time.sleep(2)
                 tool_position, grasp_width, grasp_length = self.generate()
                 if tool_position is None:
@@ -168,7 +168,8 @@ class GraspGenerator:
                 
                 x = tool_position[0]
                 y = tool_position[1]
-                z = z_init = tool_position[2]
+                z_init = tool_position[2]
+                z = tool_position[2] * 0.5
                 angle = tool_position[3] * 100
                 if tool_position[2] > self.grip_height:
                     z = tool_position[2] - self.grip_height * 0.5
@@ -194,10 +195,8 @@ class GraspGenerator:
                 time.sleep(0.5)
                 self.s.effectorMovement(x * 1000, y * 1000, 300, - angle * 0.5 * 0.62)
                 time.sleep(1)
-                self.s.effectorMovement(-400, 200, 300, 0)
+                self.s.effectorMovement(-200, 200, 200, 0)
                 time.sleep(2)
-                self.s.effectorMovement(-400, 0, 300, 0)
-                time.sleep(1)
 
         else:
             while(True):
