@@ -2,6 +2,9 @@ from __future__ import print_function
 import cv2 as cv
 import argparse
 
+from hardware.camera import RealSenseCamera
+
+
 parser = argparse.ArgumentParser(description='This program shows how to use background subtraction methods provided by \
                                               OpenCV. You can process both videos and images.')
 parser.add_argument('--input', type=str, help='Path to a video or a sequence of image.', default='vtest.avi')
@@ -16,18 +19,38 @@ else:
     backSub = cv.createBackgroundSubtractorKNN()
 ## [create]
 
+width = 640
+height = 480
 ## [capture]
-capture = cv.VideoCapture(0)
-if not capture.isOpened():
-    print('Unable to open: ' + args.input)
-    exit(0)
+camera = RealSenseCamera(width=width, height=height)
+camera.connect()
+
+# capture = cv.VideoCapture(0)
+# if not capture.isOpened():
+#     print('Unable to open: ' + args.input)
+#     exit(0)
 ## [capture]
 
 init_frame = None
 
+output_width = 250
+output_height = 200
+
+bottom = (height + output_height) // 2
+right = (width + output_width) // 2
+
+left = (width - output_width) // 2
+top = (height - output_height) // 2
+
 while True:
-    ret, init_frame = capture.read()
-    init_frame = cv.cvtColor(init_frame, cv.COLOR_BGR2GRAY)
+    image_bundle = camera.get_image_bundle()
+    camera_color_img = image_bundle['rgb']
+    camera_depth_img = image_bundle['aligned_depth']
+    bgr_color_data = cv.cvtColor(camera_color_img, cv.COLOR_RGB2BGR)
+    gray_data = cv.cvtColor(bgr_color_data, cv.COLOR_RGB2GRAY)
+    # ret, init_frame = capture.read()
+    # init_frame = cv.cvtColor(init_frame, cv.COLOR_BGR2GRAY)
+    init_frame = gray_data[top:bottom, left:right]
     cv.imshow('Frame', init_frame)
     keyboard = cv.waitKey(30)
     if keyboard == 'q' or keyboard == 27:
@@ -35,12 +58,17 @@ while True:
 
 
 while True:
-    ret, frame = capture.read()
-    if frame is None:
-        break
+    # ret, frame = capture.read()
+    # if frame is None:
+    #     break
 
-    frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-    
+    # frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    image_bundle = camera.get_image_bundle()
+    camera_color_img = image_bundle['rgb']
+    camera_depth_img = image_bundle['aligned_depth']
+    bgr_color_data = cv.cvtColor(camera_color_img, cv.COLOR_RGB2BGR)
+    gray_data = cv.cvtColor(bgr_color_data, cv.COLOR_RGB2GRAY)
+    frame = gray_data[top:bottom, left:right]
 
     ## [apply]
     #update the background model
