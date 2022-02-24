@@ -48,8 +48,6 @@ class DatasetGenerator:
                                    output_height=self.output_height,
                                    include_depth=include_depth,
                                    include_rgb=include_rgb,
-                                   top_left=self.top_left,
-                                   bottom_right=self.bottom_right,
                                    )
 
         # Connect to camera
