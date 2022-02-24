@@ -18,17 +18,18 @@ from RAS_Com import RAS_Connect
 
 class GraspGenerator:
     def __init__(self, saved_model_path, cam_id, visualize=False, enable_arm=False, include_depth=True,
-                                   include_rgb=True, conveyor_speed=0.0, conveyor_direction="r_to_l"):
+                                   include_rgb=True, conveyor_speed=None):
         self.saved_model_path = saved_model_path
 
         self.width = 640
         self.height = 480
         self.output_size = 350
-        self.output_width = 580
-        self.output_height = 220
+        self.output_width = 300
+        self.output_height = 300
+        self.top_left = (150, 200)
+        self.bottom_right = (330, 640)
         self.grip_height = 0.5
         self.conveyor_speed = conveyor_speed
-        self.conveyor_direction = conveyor_direction
 
         self.enable_arm = enable_arm
 
@@ -47,7 +48,10 @@ class GraspGenerator:
                                    output_width=self.output_width,
                                    output_height=self.output_height,
                                    include_depth=include_depth,
-                                   include_rgb=include_rgb)
+                                   include_rgb=include_rgb,
+                                   top_left=self.top_left,
+                                   bottom_right=self.bottom_right,
+                                   )
 
         # Connect to camera
         self.camera.connect()
@@ -82,7 +86,7 @@ class GraspGenerator:
         rgb = image_bundle['rgb']
         depth = image_bundle['aligned_depth']
         x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
-        print(x.shape)
+        # print(x.shape)
 
         # Predict the grasp pose using the saved model
         with torch.no_grad():
@@ -109,7 +113,7 @@ class GraspGenerator:
                          grasp_width_img=width_img)
 
         if len(grasps) == 0:
-            return None, None
+            return None, None, None
 
         # Get grasp position from model output
         pos_z = depth[grasps[0].center[0] + self.cam_data.top_left[0],
@@ -118,9 +122,12 @@ class GraspGenerator:
                             pos_z / self.camera.intrinsics.fx)
         pos_y = np.multiply(grasps[0].center[0] + self.cam_data.top_left[0] - self.camera.intrinsics.ppy,
                             pos_z / self.camera.intrinsics.fy)
+        print("grasps[0].center[0] + self.cam_data.top_left[0]: ", grasps[0].center[1], self.cam_data.top_left[1])
+        print("self.camera.intrinsics.ppx: ", self.camera.intrinsics.ppx)
+        print("___CAM POSITION___: ", pos_x, pos_y, pos_z)
 
         if pos_z == 0:
-            return None, None
+            return None, None, None
 
         target = np.asarray([pos_x, pos_y, pos_z])
         target.shape = (3, 1)
@@ -145,7 +152,7 @@ class GraspGenerator:
 
         
 
-        return grasp_pose, grasps[0].width
+        return grasp_pose, grasps[0].width, grasps[0].length
 
     def run(self):
         if self.enable_arm:
@@ -153,34 +160,42 @@ class GraspGenerator:
                 print("Resetting position")
                 self.s.grip(90)
                 time.sleep(2)
-                self.s.effectorMovement(0, 150, 300, 0)
+                self.s.effectorMovement(-20, 200, 200, 0)
                 time.sleep(2)
-                tool_position, grasp_width = self.generate()
+                tool_position, grasp_width, grasp_length = self.generate()
                 if tool_position is None:
                     continue
-
+                
+                x = tool_position[0]
+                y = tool_position[1]
+                z_init = tool_position[2]
                 z = tool_position[2] * 0.5
+                angle = tool_position[3] * 100
                 if tool_position[2] > self.grip_height:
                     z = tool_position[2] - self.grip_height * 0.5
+
                 print("___POSITION___: ", tool_position)
-                print("___ANGLE___: ", tool_position[3] * 100)
+                print("___ANGLE___: ", angle)
                 print("___Z___: ", z * 1000)
-                print("___LENGTH___", grasp_width)
+                print("___LENGTH___", grasp_length)
                 print("___WIDTH___", grasp_width)
-                # self.s.grip()
-                self.s.effectorMovement(
-                    tool_position[0] * 1000, tool_position[1] * 1000, z * 1000 + 50, - tool_position[3] * 100 * 0.5 * 0.62)
-                # self.s.effectorMovement(0, 300, 300, tool_position[3] * 1000)
-                time.sleep(2)
-                self.s.effectorMovement(
-                    tool_position[0] * 1000, tool_position[1] * 1000, z * 1000, - tool_position[3] * 100 * 0.5 * 0.62)
-                time.sleep(2)
+
+                if self.conveyor_speed is None:
+                    self.s.effectorMovement(x * 1000, y * 1000, z_init * 1000, - angle * 0.5 * 0.62)
+                    time.sleep(2)
+                    self.s.effectorMovement(x * 1000, y * 1000, z * 1000, - angle * 0.5 * 0.62)
+                else:
+                    self.s.effectorMovement(0, y * 1000, z_init * 1000, - angle * 0.5 * 0.62)
+                    time_to_sleep = x / self.conveyor_speed
+                    time.sleep(time_to_sleep)
+                    print("___TIME TO SLEEP___", time_to_sleep)
+                    self.s.effectorMovement(0, y * 1000, z * 1000, - angle * 0.5 * 0.62)
+                time.sleep(0.1)
                 self.s.grip(0)
-                time.sleep(2)
-                self.s.effectorMovement(
-                    tool_position[0] * 1000, tool_position[1] * 1000, 300, - tool_position[3] * 100 * 0.5 * 0.62)
-                time.sleep(2)
-                self.s.effectorMovement(-400, 200, 300, 0)
+                time.sleep(0.5)
+                self.s.effectorMovement(x * 1000, y * 1000, 300, - angle * 0.5 * 0.62)
+                time.sleep(1)
+                self.s.effectorMovement(-200, 200, 200, 0)
                 time.sleep(2)
 
         else:

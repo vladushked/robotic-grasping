@@ -8,6 +8,7 @@ class CameraData:
     """
     Dataset wrapper for the camera data.
     """
+
     def __init__(self,
                  width=640,
                  height=480,
@@ -15,7 +16,9 @@ class CameraData:
                  output_width=224,
                  output_height=224,
                  include_depth=True,
-                 include_rgb=True
+                 include_rgb=True,
+                 bottom_right=None,
+                 top_left=None,
                  ):
         """
         :param output_size: Image output size in pixels (square)
@@ -31,13 +34,18 @@ class CameraData:
         if include_depth is False and include_rgb is False:
             raise ValueError('At least one of Depth or RGB must be specified.')
 
-        left = (width - output_width) // 2
-        top = (height - output_height) // 2
-        right = (width + output_width) // 2
-        bottom = (height + output_height) // 2
+        if bottom_right is None:
+            bottom = (height + output_height) // 2
+            right = (width + output_width) // 2
+            bottom_right = (bottom, right)
+        
+        if top_left is None:
+            left = (width - output_width) // 2
+            top = (height - output_height) // 2
+            top_left = (top, left)
 
-        self.bottom_right = (bottom, right)
-        self.top_left = (top, left)
+        self.bottom_right = bottom_right
+        self.top_left = top_left
 
     @staticmethod
     def numpy_to_torch(s):
@@ -59,8 +67,8 @@ class CameraData:
         rgb_img.crop(bottom_right=self.bottom_right, top_left=self.top_left)
         # rgb_img.resize((self.output_size, self.output_size))
         if norm:
-                rgb_img.normalise()
-                rgb_img.img = rgb_img.img.transpose((2, 0, 1))
+            rgb_img.normalise()
+            rgb_img.img = rgb_img.img.transpose((2, 0, 1))
         return rgb_img.img
 
     def get_data(self, rgb=None, depth=None):
@@ -76,12 +84,12 @@ class CameraData:
 
         if self.include_depth and self.include_rgb:
             x = self.numpy_to_torch(
-                    np.concatenate(
-                        (np.expand_dims(depth_img, 0),
-                         np.expand_dims(rgb_img, 0)),
-                        1
-                    )
+                np.concatenate(
+                    (np.expand_dims(depth_img, 0),
+                     np.expand_dims(rgb_img, 0)),
+                    1
                 )
+            )
         elif self.include_depth:
             x = self.numpy_to_torch(np.expand_dims(depth_img, 0))
         elif self.include_rgb:

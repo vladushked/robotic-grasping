@@ -134,9 +134,11 @@ class Calibration:
         for tool_position in calib_grid_pts:
             print('Requesting move to tool position: ', tool_position)
 
-            self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 45)
+            self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, -45)
             time.sleep(1.5)
-            self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, 45)
+            self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, -45)
+            time.sleep(0.5)
+            self.s.effectorMovement(tool_position[0].astype(float) * 1000, tool_position[1].astype(float) * 1000, tool_position[2].astype(float) * 1000, -45)
             time.sleep(0.5)
             # self.s.coordinateRequest()
 
