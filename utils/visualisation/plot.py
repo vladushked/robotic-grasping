@@ -20,7 +20,8 @@ def plot_results(
         grasp_angle_img,
         depth_img=None,
         no_grasps=1,
-        grasp_width_img=None
+        grasp_width_img=None,
+        mask_img=None
 ):
     """
     Plot the output of a network
@@ -33,7 +34,7 @@ def plot_results(
     :param grasp_width_img: (optional) Width output of network
     :return:
     """
-    gs = detect_grasps(grasp_q_img, grasp_angle_img, width_img=grasp_width_img, no_grasps=no_grasps)
+    gs = detect_grasps(grasp_q_img, grasp_angle_img, width_img=grasp_width_img, no_grasps=no_grasps, mask=mask_img)
 
     plt.ion()
     plt.clf()

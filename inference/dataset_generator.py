@@ -70,6 +70,18 @@ class DatasetGenerator:
 
         if self.enable_arm:
             self.s = RAS_Connect('/dev/ttyTHS0')
+        
+        self.init_rgb_img = None
+        while True:
+            image_bundle = self.camera.get_image_bundle()
+            img = self.cam_data.get_rgb(image_bundle['rgb'], False)
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+            self.init_rgb_img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+            cv2.imshow('Frame', self.init_rgb_img)
+            keyboard = cv2.waitKey(30)
+            if keyboard == 'q' or keyboard == 27:
+                break
+
 
     def load_model(self):
         print('Loading model... ')
@@ -82,7 +94,7 @@ class DatasetGenerator:
         image_bundle = self.camera.get_image_bundle()
         rgb = image_bundle['rgb']
         depth = image_bundle['aligned_depth']
-        x, depth_img, rgb_img = self.cam_data.get_data(rgb=rgb, depth=depth)
+        x, _, _ = self.cam_data.get_data(rgb=rgb, depth=depth)
         # print(x.shape)
 
         # Predict the grasp pose using the saved model
@@ -92,9 +104,25 @@ class DatasetGenerator:
 
         q_img, ang_img, width_img = post_process_output(
             pred['pos'], pred['cos'], pred['sin'], pred['width'])
-        grasps = detect_grasps(q_img, ang_img, width_img,  no_grasps=10)
+
+        rgb_img=self.cam_data.get_rgb(rgb, False)
+        img = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2BGR)
+        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        fgMask = cv2.absdiff(gray, self.init_rgb_img)
+        # Otsu's thresholding after Gaussian filtering
+        blur = cv2.GaussianBlur(fgMask,(5,5),0)
+        ret3,mask = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+        kernel = np.ones((8,8),np.uint8)
+        mask_img = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+        depth_img=np.squeeze(self.cam_data.get_depth(depth))
+        res = np.hstack((q_img, ang_img, width_img, mask_img))
+
+        cv2.imshow('Result', res)
+        cv2.waitKey(30)
         
-        print(len(grasps))
+        grasps = detect_grasps(q_img, ang_img, width_img, mask_img, no_grasps=10)
+        
         if self.fig:
             # plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, grasp_q_img=q_img,
             #            grasp_angle_img=ang_img,
@@ -107,7 +135,13 @@ class DatasetGenerator:
                          grasp_q_img=q_img,
                          grasp_angle_img=ang_img,
                          no_grasps=10,
-                         grasp_width_img=width_img)
+                         grasp_width_img=width_img,
+                         mask_img=mask_img)
+        
+        
+        ## [show]
+
+        
 
         if len(grasps) == 0:
             return None, None, None
@@ -152,6 +186,7 @@ class DatasetGenerator:
         return grasp_pose, grasps[0].width, grasps[0].length
 
     def run(self):
+
         if self.enable_arm:
             while(True):
                 print("Resetting position")
