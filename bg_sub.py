@@ -1,7 +1,7 @@
 from __future__ import print_function
 import cv2 as cv
 import argparse
-
+import numpy as np
 from hardware.camera import RealSenseCamera
 
 
@@ -33,8 +33,8 @@ camera.connect()
 
 init_frame = None
 
-output_width = 250
-output_height = 200
+output_width = 300
+output_height = 300
 
 bottom = (height + output_height) // 2
 right = (width + output_width) // 2
@@ -73,10 +73,13 @@ while True:
     ## [apply]
     #update the background model
     # fgMask = backSub.apply(frame)
-    fgMask = cv.subtract(frame, init_frame)
+    # fgMask = cv.subtract(frame, init_frame)
+    fgMask = cv.absdiff(frame, init_frame)
     # Otsu's thresholding after Gaussian filtering
     blur = cv.GaussianBlur(fgMask,(5,5),0)
-    ret3,th3 = cv.threshold(blur,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
+    ret3,mask = cv.threshold(blur,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
+    kernel = np.ones((8,8),np.uint8)
+    closed_mask = cv.morphologyEx(mask, cv.MORPH_CLOSE, kernel)
     ## [apply]
 
     ## [display_frame_number]
@@ -88,8 +91,9 @@ while True:
 
     ## [show]
     #show the current frame and the fg masks
-    cv.imshow('Frame', frame)
-    cv.imshow('FG Mask', th3)
+    res = np.hstack((frame, fgMask,blur, mask, closed_mask))
+
+    cv.imshow('Result', res)
     ## [show]
 
     keyboard = cv.waitKey(30)
