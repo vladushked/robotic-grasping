@@ -25,8 +25,8 @@ class DatasetGenerator:
         self.width = 640
         self.height = 480
         self.output_size = 350
-        self.output_width = 200
-        self.output_height = 200
+        self.output_width = 250
+        self.output_height = 250
         # self.top_left = (150, 200)
         # self.bottom_right = (330, 640)
         self.grip_height = 0.5
