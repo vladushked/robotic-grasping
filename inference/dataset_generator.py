@@ -1,6 +1,7 @@
 import os
 import time
 import cv2
+import imutils
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -75,13 +76,12 @@ class DatasetGenerator:
         while True:
             image_bundle = self.camera.get_image_bundle()
             img = self.cam_data.get_rgb(image_bundle['rgb'], False)
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+            # img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
             self.init_rgb_img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-            cv2.imshow('Frame', self.init_rgb_img)
+            cv2.imshow('camera', self.init_rgb_img)
             keyboard = cv2.waitKey(30)
             if keyboard == 'q' or keyboard == 27:
                 break
-
 
     def load_model(self):
         print('Loading model... ')
@@ -90,6 +90,8 @@ class DatasetGenerator:
         self.device = get_device(force_cpu=False)
 
     def generate(self):
+        
+
         # Get RGB-D image from camera
         image_bundle = self.camera.get_image_bundle()
         rgb = image_bundle['rgb']
@@ -106,131 +108,62 @@ class DatasetGenerator:
             pred['pos'], pred['cos'], pred['sin'], pred['width'])
 
         rgb_img=self.cam_data.get_rgb(rgb, False)
-        img = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2BGR)
-        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        # rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2BGR)
+        gray = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2GRAY)
         fgMask = cv2.absdiff(gray, self.init_rgb_img)
         # Otsu's thresholding after Gaussian filtering
-        blur = cv2.GaussianBlur(fgMask,(5,5),0)
+        blur = cv2.GaussianBlur(fgMask,(9,9),0)
         ret3,mask = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-        kernel = np.ones((8,8),np.uint8)
+        blur = cv2.GaussianBlur(mask,(9,9),0)
+        kernel = np.ones((9,9),np.uint8)
         mask_img = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
-        depth_img=np.squeeze(self.cam_data.get_depth(depth))
-        res = np.hstack((q_img, ang_img, width_img, mask_img))
+        cnts = cv2.findContours(mask_img.copy(), cv2.RETR_EXTERNAL,
+            cv2.CHAIN_APPROX_SIMPLE)
+        cnts = imutils.grab_contours(cnts)
+        c = max(cnts, key=cv2.contourArea)
+        # print("Contour", c.shape)
+        # draw the contours of c
+        cv2.drawContours(rgb_img, [c], -1, (0, 0, 255), 2)
 
+        x,y,w,h = cv2.boundingRect(c)
+        cv2.rectangle(rgb_img,(x,y),(x+w,y+h),(0,255,0),2)
+
+        rect = cv2.minAreaRect(c)
+        box = cv2.boxPoints(rect)
+        box = np.int0(box)
+        cv2.drawContours(rgb_img,[box],0,(255,0,0),2)
+        
+        rows,cols = rgb_img.shape[:2]
+        [vx,vy,x,y] = cv2.fitLine(c, cv2.DIST_L2,0,0.01,0.01)
+        lefty = int((-x*vy/vx) + y)
+        righty = int(((cols-x)*vy/vx)+y)
+        cv2.line(rgb_img,(cols-1,righty),(0,lefty),(255,255,0),2)
+
+
+        depth_img=np.squeeze(self.cam_data.get_depth(depth))
+        res = np.hstack((gray, mask, blur, mask_img))
+        # res = np.hstack((gray, q_img, ang_img, width_img, fgMask, blur, mask, mask_img))
+
+        cv2.imshow('camera', rgb_img)
         cv2.imshow('Result', res)
         cv2.waitKey(30)
         
         grasps = detect_grasps(q_img, ang_img, width_img, mask_img, no_grasps=10)
         
         if self.fig:
-            # plot_grasp(fig=self.fig, rgb_img=self.cam_data.get_rgb(rgb, False), grasps=grasps, grasp_q_img=q_img,
-            #            grasp_angle_img=ang_img,
-            #            no_grasps=10,
-            #            grasp_width_img=width_img)
+            plot_grasp(fig=self.fig, rgb_img=rgb_img,grasp_q_img=q_img, grasps=grasps, no_grasps=10, mask_img=mask_img)
 
-            plot_results(fig=self.fig,
-                         rgb_img=self.cam_data.get_rgb(rgb, False),
-                         depth_img=np.squeeze(self.cam_data.get_depth(depth)),
-                         grasp_q_img=q_img,
-                         grasp_angle_img=ang_img,
-                         no_grasps=10,
-                         grasp_width_img=width_img,
-                         mask_img=mask_img)
-        
-        
-        ## [show]
-
-        
-
-        if len(grasps) == 0:
-            return None, None, None
-
-        # Get grasp position from model output
-        pos_z = depth[grasps[0].center[0] + self.cam_data.top_left[0],
-                      grasps[0].center[1] + self.cam_data.top_left[1]] * self.cam_depth_scale
-        pos_x = np.multiply(grasps[0].center[1] + self.cam_data.top_left[1] - self.camera.intrinsics.ppx,
-                            pos_z / self.camera.intrinsics.fx)
-        pos_y = np.multiply(grasps[0].center[0] + self.cam_data.top_left[0] - self.camera.intrinsics.ppy,
-                            pos_z / self.camera.intrinsics.fy)
-        print("grasps[0].center[0] + self.cam_data.top_left[0]: ", grasps[0].center[1], self.cam_data.top_left[1])
-        print("self.camera.intrinsics.ppx: ", self.camera.intrinsics.ppx)
-        print("___CAM POSITION___: ", pos_x, pos_y, pos_z)
-
-        if pos_z == 0:
-            return None, None, None
-
-        target = np.asarray([pos_x, pos_y, pos_z])
-        target.shape = (3, 1)
-        #print('target: ', target)
-
-        # Convert camera to robot coordinates
-        camera2robot = self.cam_pose
-        target_position = np.dot(
-            camera2robot[0:3, 0:3], target) + camera2robot[0:3, 3:]
-        
-        target_position = target_position[0:3, 0]
-
-        # Convert camera to robot angle
-        angle = np.asarray([0, 0, grasps[0].angle])
-        angle.shape = (3, 1)
-        target_angle = np.dot(camera2robot[0:3, 0:3], angle)
-
-        # Concatenate grasp pose with grasp angle
-        grasp_pose = np.append(target_position, target_angle[2])
-
-        # print('grasp_pose: ', grasp_pose)
-
-        
-
-        return grasp_pose, grasps[0].width, grasps[0].length
+            # plot_results(fig=self.fig,
+            #              rgb_img=self.cam_data.get_rgb(rgb, False),
+            #              depth_img=np.squeeze(self.cam_data.get_depth(depth)),
+            #              grasp_q_img=q_img,
+            #              grasp_angle_img=ang_img,
+            #              no_grasps=10,
+            #              grasp_width_img=width_img,
+            #              mask_img=mask_img)
+        return
 
     def run(self):
-
-        if self.enable_arm:
-            while(True):
-                print("Resetting position")
-                self.s.grip(90)
-                time.sleep(2)
-                self.s.effectorMovement(-20, 200, 200, 0)
-                time.sleep(2)
-                tool_position, grasp_width, grasp_length = self.generate()
-                if tool_position is None:
-                    continue
-                
-                x = tool_position[0]
-                y = tool_position[1]
-                z_init = tool_position[2]
-                z = tool_position[2] * 0.5
-                angle = tool_position[3] * 100
-                if tool_position[2] > self.grip_height:
-                    z = tool_position[2] - self.grip_height * 0.5
-
-                print("___POSITION___: ", tool_position)
-                print("___ANGLE___: ", angle)
-                print("___Z___: ", z * 1000)
-                print("___LENGTH___", grasp_length)
-                print("___WIDTH___", grasp_width)
-
-                if self.conveyor_speed is None:
-                    self.s.effectorMovement(x * 1000, y * 1000, z_init * 1000, - angle * 0.5 * 0.62)
-                    time.sleep(2)
-                    self.s.effectorMovement(x * 1000, y * 1000, z * 1000, - angle * 0.5 * 0.62)
-                else:
-                    self.s.effectorMovement(0, y * 1000, z_init * 1000, - angle * 0.5 * 0.62)
-                    time_to_sleep = x / self.conveyor_speed
-                    time.sleep(time_to_sleep)
-                    print("___TIME TO SLEEP___", time_to_sleep)
-                    self.s.effectorMovement(0, y * 1000, z * 1000, - angle * 0.5 * 0.62)
-                time.sleep(0.1)
-                self.s.grip(0)
-                time.sleep(0.5)
-                self.s.effectorMovement(x * 1000, y * 1000, 300, - angle * 0.5 * 0.62)
-                time.sleep(1)
-                self.s.effectorMovement(-200, 200, 200, 0)
-                time.sleep(2)
-
-        else:
-            while(True):
-                tool_position = self.generate()
-                time.sleep(1)
+       while(True):
+            self.generate()

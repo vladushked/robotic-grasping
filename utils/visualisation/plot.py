@@ -93,7 +93,8 @@ def plot_grasp(
         grasp_q_img=None,
         grasp_angle_img=None,
         no_grasps=1,
-        grasp_width_img=None
+        grasp_width_img=None,
+        mask_img=None,
 ):
     """
     Plot the output grasp of a network
@@ -108,7 +109,7 @@ def plot_grasp(
     :return:
     """
     if grasps is None:
-        grasps = detect_grasps(grasp_q_img, grasp_angle_img, width_img=grasp_width_img, no_grasps=no_grasps)
+        grasps = detect_grasps(grasp_q_img, grasp_angle_img, width_img=grasp_width_img, no_grasps=no_grasps, mask=mask_img)
 
     plt.ion()
     plt.clf()
@@ -135,22 +136,22 @@ def plot_grasp(
         fig.savefig('results/{}.png'.format(time))
 
     # # img = np.rollaxis(rgb_img,0,3)
-    img = np.copy(rgb_img)
+    # img = np.copy(rgb_img)
 
-    for g in grasps:
-        y1_length = int(g.center[0] + g.width * np.cos(g.angle));
-        x1_length =  int(g.center[1] + g.width * np.sin(g.angle));
-        y2_length = int(g.center[0] - g.width * np.cos(g.angle));
-        x2_length =  int(g.center[1] - g.width * np.sin(g.angle));
-        color = list(np.random.random(size=3) * 256)
-        cv2.line(img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
-        cv2.line(grasp_q_img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
-        cv2.line(grasp_angle_img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
-        cv2.line(grasp_width_img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
-    cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
-    cv2.imshow('RealSense', np.hstack((grasp_q_img, grasp_angle_img, grasp_width_img)))
-    cv2.imshow("RGB", img)
-    cv2.waitKey(1)
+    # for g in grasps:
+    #     y1_length = int(g.center[0] + g.width * np.cos(g.angle));
+    #     x1_length =  int(g.center[1] + g.width * np.sin(g.angle));
+    #     y2_length = int(g.center[0] - g.width * np.cos(g.angle));
+    #     x2_length =  int(g.center[1] - g.width * np.sin(g.angle));
+    #     color = list(np.random.random(size=3) * 256)
+    #     cv2.line(img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
+    #     cv2.line(grasp_q_img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
+    #     cv2.line(grasp_angle_img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
+    #     cv2.line(grasp_width_img, (x1_length, y1_length), (x2_length, y2_length), color, 1)
+    # cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
+    # cv2.imshow('RealSense', np.hstack((grasp_q_img, grasp_angle_img, grasp_width_img)))
+    # cv2.imshow("RGB", img)
+    # cv2.waitKey(1)
 
 
 
