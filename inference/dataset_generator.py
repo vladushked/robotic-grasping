@@ -1,4 +1,5 @@
 import os
+import glob
 import time
 import cv2
 import imutils
@@ -15,24 +16,30 @@ from utils.dataset_processing.grasp import detect_grasps
 from utils.visualisation.plot import plot_grasp, plot_results
 
 from RAS_Com import RAS_Connect
-
+import json
 
 class DatasetGenerator:
-    def __init__(self, saved_model_path, visualize=False, enable_arm=False, include_depth=True,
-                                   include_rgb=True, conveyor_speed=None):
+    def __init__(self, saved_model_path, dataset_dir, material_dir):
         self.saved_model_path = saved_model_path
+        self.dataset_dir = dataset_dir
+        self.material_dir = material_dir
+        self.save_path = os.path.join(dataset_dir, material_dir)
+        
+        self.i = 0
+
+        already_saved_rgbs = glob.glob(os.path.join(self.save_path, "pcd????r.png"))
+        if (len(already_saved_rgbs)) > 0:
+            already_saved_rgbs.sort()
+            self.i = int(os.path.split(already_saved_rgbs[-1])[-1].split("pcd")[-1].split("r.png")[0])
+        print("Last: ", self.i)
+
 
         self.width = 640
         self.height = 480
-        self.output_size = 350
-        self.output_width = 250
-        self.output_height = 250
-        # self.top_left = (150, 200)
-        # self.bottom_right = (330, 640)
-        self.grip_height = 0.5
-        self.conveyor_speed = conveyor_speed
+        self.output_size = 300
+        self.delta = [(self.width - self.output_size) // 2, (self.height - self.output_size) // 2]
 
-        self.enable_arm = enable_arm
+        self.grip_height = 0.5
 
         self.camera = RealSenseCamera(width=self.width,
                                       height=self.height,
@@ -45,10 +52,10 @@ class DatasetGenerator:
         self.cam_data = CameraData(width=self.width,
                                    height=self.height,
                                    output_size=self.output_size,
-                                   output_width=self.output_width,
-                                   output_height=self.output_height,
-                                   include_depth=include_depth,
-                                   include_rgb=include_rgb,
+                                   output_width=self.output_size,
+                                   output_height=self.output_size,
+                                   include_depth=True,
+                                   include_rgb=True,
                                    )
 
         # Connect to camera
@@ -64,13 +71,8 @@ class DatasetGenerator:
         # self.grasp_available = os.path.join(homedir, "grasp_available.npy")
         # self.grasp_pose = os.path.join(homedir, "grasp_pose.npy")
 
-        if visualize:
-            self.fig = plt.figure(figsize=(10, 10))
-        else:
-            self.fig = None
+        self.fig = plt.figure(figsize=(10, 10))
 
-        if self.enable_arm:
-            self.s = RAS_Connect('/dev/ttyTHS0')
         
         self.init_rgb_img = None
         while True:
@@ -90,78 +92,137 @@ class DatasetGenerator:
         self.device = get_device(force_cpu=False)
 
     def generate(self):
-        
+        self.i += 1
 
-        # Get RGB-D image from camera
-        image_bundle = self.camera.get_image_bundle()
-        rgb = image_bundle['rgb']
-        depth = image_bundle['aligned_depth']
-        x, _, _ = self.cam_data.get_data(rgb=rgb, depth=depth)
-        # print(x.shape)
+        while True:
+            # Get RGB-D image from camera
+            image_bundle = self.camera.get_image_bundle()
+            rgb = image_bundle['rgb']
+            depth = image_bundle['aligned_depth']
 
-        # Predict the grasp pose using the saved model
-        with torch.no_grad():
-            xc = x.to(self.device)
-            pred = self.model.predict(xc)
+            rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
+            # rgb_to_save = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
+            rgb_to_save = rgb.copy()
+            depth_to_save = depth
 
-        q_img, ang_img, width_img = post_process_output(
-            pred['pos'], pred['cos'], pred['sin'], pred['width'])
+            rgb_img=self.cam_data.get_rgb(rgb, False)
+            gray = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2GRAY)
+            # cv2.imshow('camera', gray)
 
-        rgb_img=self.cam_data.get_rgb(rgb, False)
-        # rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2BGR)
-        gray = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2GRAY)
-        fgMask = cv2.absdiff(gray, self.init_rgb_img)
-        # Otsu's thresholding after Gaussian filtering
-        blur = cv2.GaussianBlur(fgMask,(9,9),0)
-        ret3,mask = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-        blur = cv2.GaussianBlur(mask,(9,9),0)
-        kernel = np.ones((9,9),np.uint8)
-        mask_img = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+            x, _, _ = self.cam_data.get_data(rgb=rgb, depth=depth)
 
-        cnts = cv2.findContours(mask_img.copy(), cv2.RETR_EXTERNAL,
-            cv2.CHAIN_APPROX_SIMPLE)
-        cnts = imutils.grab_contours(cnts)
-        c = max(cnts, key=cv2.contourArea)
-        # print("Contour", c.shape)
-        # draw the contours of c
-        cv2.drawContours(rgb_img, [c], -1, (0, 0, 255), 2)
+            # Predict the grasp pose using the saved model
+            with torch.no_grad():
+                xc = x.to(self.device)
+                pred = self.model.predict(xc)
 
-        x,y,w,h = cv2.boundingRect(c)
-        cv2.rectangle(rgb_img,(x,y),(x+w,y+h),(0,255,0),2)
+            q_img, ang_img, width_img = post_process_output(
+                pred['pos'], pred['cos'], pred['sin'], pred['width'])
 
-        rect = cv2.minAreaRect(c)
-        box = cv2.boxPoints(rect)
-        box = np.int0(box)
-        cv2.drawContours(rgb_img,[box],0,(255,0,0),2)
-        
-        rows,cols = rgb_img.shape[:2]
-        [vx,vy,x,y] = cv2.fitLine(c, cv2.DIST_L2,0,0.01,0.01)
-        lefty = int((-x*vy/vx) + y)
-        righty = int(((cols-x)*vy/vx)+y)
-        cv2.line(rgb_img,(cols-1,righty),(0,lefty),(255,255,0),2)
+            fgMask = cv2.absdiff(gray, self.init_rgb_img)
+            # Otsu's thresholding after Gaussian filtering
+            # mask = cv2.adaptiveThreshold(fgMask,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
+            blur = cv2.GaussianBlur(fgMask,(9,9),0)
+
+            ret3,mask = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+            # blur = cv2.GaussianBlur(mask,(9,9),0)
+            kernel = np.ones((9,9),np.uint8)
+            # mask_img = cv2.dilate(mask,kernel,iterations = 1)
+            mask_img = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=1)
+
+            cnts = cv2.findContours(mask_img.copy(), cv2.RETR_EXTERNAL,
+                cv2.CHAIN_APPROX_SIMPLE)
+            cnts = imutils.grab_contours(cnts)
+            if len(cnts) > 0:
+                contour = max(cnts, key=cv2.contourArea)
+                
+                # draw the contours of c
+                cv2.drawContours(rgb_img, [contour], -1, (0, 0, 255), 2)
+
+                x,y,w,h = cv2.boundingRect(contour)
+                cv2.rectangle(rgb_img,(x,y),(x+w,y+h),(0,255,0),2)
+                bbox = np.asarray([x,y,x+w,y+h]).reshape(2,2)
+
+                rect = cv2.minAreaRect(contour)
+                minbox = cv2.boxPoints(rect)
+                minbox = np.int0(minbox)
+                cv2.drawContours(rgb_img,[minbox],0,(255,0,0),2, cv2.FILLED)
+                
+                rows,cols = rgb_img.shape[:2]
+                [vx,vy,x,y] = cv2.fitLine(contour, cv2.DIST_L2,0,0.01,0.01)
+                meanline = np.asarray([vx,vy,x + self.delta[0],y + self.delta[1]])
+                
+                lefty = int((-x*vy/vx) + y)
+                righty = int(((cols-x)*vy/vx)+y)
+                cv2.line(rgb_img,(cols-1,righty),(0,lefty),(255,255,0),2)
 
 
-        depth_img=np.squeeze(self.cam_data.get_depth(depth))
-        res = np.hstack((gray, mask, blur, mask_img))
-        # res = np.hstack((gray, q_img, ang_img, width_img, fgMask, blur, mask, mask_img))
+            depth_img=np.squeeze(self.cam_data.get_depth(depth))
+            res = np.hstack((gray, fgMask, blur, mask, mask_img))
+            # nn_res = np.hstack((q_img, ang_img, width_img))
 
-        cv2.imshow('camera', rgb_img)
-        cv2.imshow('Result', res)
-        cv2.waitKey(30)
-        
-        grasps = detect_grasps(q_img, ang_img, width_img, mask_img, no_grasps=10)
-        
-        if self.fig:
-            plot_grasp(fig=self.fig, rgb_img=rgb_img,grasp_q_img=q_img, grasps=grasps, no_grasps=10, mask_img=mask_img)
+            cv2.imshow('Result', res)
+            cv2.imshow('q_img', q_img)
+            cv2.imshow('ang_img', ang_img)
+            cv2.imshow('width_img', width_img)
+            cv2.waitKey(30)
+            
+            grasps = detect_grasps(q_img, ang_img, width_img, mask_img, no_grasps=10)
+            grasps_list = []
+            for grasp in grasps:
+                grasp_array = grasp.as_gr.points
+                grasp_array[:,[0, 1]] = grasp_array[:,[1, 0]]
+                grasps_list.append(grasp.as_gr.points)
+            grasps_array = np.asarray(grasps_list)
+            
+            for grasp in grasps_list:
+                color = list(np.random.random(size=3) * 256)
+                cv2.drawContours(rgb_img, [grasp_array.astype(int)], 0, color=color, thickness=4)
+            cv2.imshow('camera', rgb_img)
+            
+            # if self.fig:
+            #     plot_grasp(fig=self.fig, rgb_img=rgb_img,grasp_q_img=q_img, grasps=grasps, no_grasps=10, mask_img=mask_img)
+            
 
-            # plot_results(fig=self.fig,
-            #              rgb_img=self.cam_data.get_rgb(rgb, False),
-            #              depth_img=np.squeeze(self.cam_data.get_depth(depth)),
-            #              grasp_q_img=q_img,
-            #              grasp_angle_img=ang_img,
-            #              no_grasps=10,
-            #              grasp_width_img=width_img,
-            #              mask_img=mask_img)
+            keyboard = cv2.waitKey(30)
+            if keyboard == 'q' or keyboard == 27:
+                break        
+
+        print("Saving: %04d" % self.i)
+
+        # saving positive grasps
+        cposname = "pcd%04dcpos.txt" % self.i
+        grasps_array = grasps_array.reshape(-1, 2) + self.delta
+        np.savetxt(os.path.join(self.save_path, cposname), grasps_array, fmt="%f")
+
+        # saving depth .tiff
+        dname = "pcd%04dd.tiff" % self.i
+        cv2.imwrite(os.path.join(self.save_path, dname), depth_to_save)
+
+
+        # saving rgb .png
+        rname = "pcd%04dr.png" % self.i
+        cv2.imwrite(os.path.join(self.save_path, rname), rgb_to_save)
+
+        # saving contour
+        contname = "pcd%04dcont.txt" % self.i
+        contour = np.squeeze(contour) + self.delta
+        np.savetxt(os.path.join(self.save_path, contname), contour, fmt="%d")
+
+        # saving bbox
+        bboxname = "pcd%04dbbox.txt" % self.i
+        bbox = bbox + self.delta
+        np.savetxt(os.path.join(self.save_path, bboxname), bbox, fmt="%d")
+
+        # saving minbox
+        minboxname = "pcd%04dminbox.txt" % self.i
+        minbox = minbox + self.delta
+        np.savetxt(os.path.join(self.save_path, minboxname), minbox, fmt="%d")
+
+        # saving meanline
+        meanlinename = "pcd%04dmeanline.txt" % self.i
+        np.savetxt(os.path.join(self.save_path, meanlinename), meanline, fmt="%f")
+
         return
 
     def run(self):
