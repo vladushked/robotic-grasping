@@ -77,13 +77,18 @@ class DatasetGenerator:
         self.init_rgb_img = None
         while True:
             image_bundle = self.camera.get_image_bundle()
-            img = self.cam_data.get_rgb(image_bundle['rgb'], False)
-            # img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-            self.init_rgb_img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+            background = self.cam_data.get_rgb(image_bundle['rgb'], False)
+            # self.init_rgb_img = cv2.cvtColor(self.init_rgb_img, cv2.COLOR_RGB2BGR)
+            self.init_rgb_img = cv2.cvtColor(background, cv2.COLOR_RGB2GRAY)
             cv2.imshow('camera', self.init_rgb_img)
             keyboard = cv2.waitKey(30)
             if keyboard == 'q' or keyboard == 27:
                 break
+        
+        if not os.path.isfile(os.path.join(self.save_path, "background.png")):
+            # saving rgb .png
+            print("Saving background ...")
+            cv2.imwrite(os.path.join(self.save_path, "background.png"), cv2.cvtColor(image_bundle['rgb'], cv2.COLOR_RGB2BGR))
 
     def load_model(self):
         print('Loading model... ')
@@ -120,6 +125,7 @@ class DatasetGenerator:
                 pred['pos'], pred['cos'], pred['sin'], pred['width'])
 
             fgMask = cv2.absdiff(gray, self.init_rgb_img)
+            # fgMask = cv2.cvtColor(fgMask, cv2.COLOR_RGB2GRAY)
             # Otsu's thresholding after Gaussian filtering
             # mask = cv2.adaptiveThreshold(fgMask,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
             blur = cv2.GaussianBlur(fgMask,(9,9),0)
