@@ -176,14 +176,13 @@ class DatasetGenerator:
             grasps = detect_grasps(q_img, ang_img, width_img, mask_img, no_grasps=10)
             grasps_list = []
             for grasp in grasps:
-                grasp_array = grasp.as_gr.points
-                grasp_array[:,[0, 1]] = grasp_array[:,[1, 0]]
-                grasps_list.append(grasp.as_gr.points)
-            grasps_array = np.asarray(grasps_list)
-            
-            for grasp in grasps_list:
+                grasp = grasp.as_gr.points
+                grasp[:,[0, 1]] = grasp[:,[1, 0]]
+                grasps_list.append(grasp)
                 color = list(np.random.random(size=3) * 256)
-                cv2.drawContours(rgb_img, [grasp_array.astype(int)], 0, color=color, thickness=4)
+                cv2.drawContours(rgb_img, [grasp.astype(int)], 0, color=color, thickness=4)
+
+            grasps_array = np.asarray(grasps_list)
             cv2.imshow('camera', rgb_img)
             
             # if self.fig:
@@ -198,6 +197,8 @@ class DatasetGenerator:
 
         # saving positive grasps
         cposname = "pcd%04dcpos.txt" % self.i
+        print("self.delta", self.delta)
+        print("grasps_array", grasps_array)
         grasps_array = grasps_array.reshape(-1, 2) + self.delta
         np.savetxt(os.path.join(self.save_path, cposname), grasps_array, fmt="%f")
 
