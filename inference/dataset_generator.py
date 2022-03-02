@@ -3,6 +3,7 @@ import glob
 import time
 import cv2
 import imutils
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,6 +25,8 @@ class DatasetGenerator:
         self.dataset_dir = dataset_dir
         self.material_dir = material_dir
         self.save_path = os.path.join(dataset_dir, material_dir)
+
+        Path(self.save_path).mkdir(parents=True, exist_ok=True)
         
         self.i = 0
 
