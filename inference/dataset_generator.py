@@ -38,8 +38,8 @@ class DatasetGenerator:
         print("Last: ", self.i)
 
 
-        self.width = 640
-        self.height = 480
+        self.width = 1280
+        self.height = 720
         self.output_size = 300
         self.delta = [(self.width - self.output_size) // 2, (self.height - self.output_size) // 2]
 
@@ -113,7 +113,7 @@ class DatasetGenerator:
             # rgb_to_save = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
             rgb_to_save = rgb.copy()
             depth_to_save = depth.copy()
-            print("Max depth", depth_to_save.max())
+            # print("Max depth", depth_to_save.max())
             
 
             rgb_img=self.cam_data.get_rgb(rgb, False)
@@ -131,7 +131,7 @@ class DatasetGenerator:
             q_img, ang_img, width_img = post_process_output(
                 pred['pos'], pred['cos'], pred['sin'], pred['width'])
 
-            fgMask = cv2.absdiff(gray, self.init_rgb_img)
+            fgMask = cv2.absdiff(self.init_rgb_img, gray)
             # fgMask = cv2.cvtColor(fgMask, cv2.COLOR_RGB2GRAY)
             # Otsu's thresholding after Gaussian filtering
             # mask = cv2.adaptiveThreshold(fgMask,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
@@ -173,12 +173,12 @@ class DatasetGenerator:
             res = np.hstack((gray, fgMask, blur, mask, mask_img))
             # nn_res = np.hstack((q_img, ang_img, width_img))
 
-            # cv2.imshow('Result', res)
-            # cv2.imshow('q_img', q_img)
+            cv2.imshow('Result', res)
+            cv2.imshow('q_img', q_img)
             # cv2.imshow('ang_img', ang_img)
             # cv2.imshow('width_img', width_img)
             
-            grasps = detect_grasps(q_img, ang_img, width_img, mask_img, no_grasps=10)
+            grasps = detect_grasps(q_img, ang_img, width_img, mask_img, no_grasps=20)
             grasps_list = []
             for grasp in grasps:
                 grasp = grasp.as_gr.points
