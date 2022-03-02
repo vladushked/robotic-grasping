@@ -2,6 +2,7 @@ import os
 import glob
 import time
 import cv2
+from cv2 import COLORMAP_JET
 import imutils
 from pathlib import Path
 
@@ -111,9 +112,12 @@ class DatasetGenerator:
             rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
             # rgb_to_save = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
             rgb_to_save = rgb.copy()
-            depth_to_save = depth
+            depth_to_save = depth.copy()
+            print("Max depth", depth_to_save.max())
+            
 
             rgb_img=self.cam_data.get_rgb(rgb, False)
+            depth_img=np.squeeze(self.cam_data.get_depth(depth))
             gray = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2GRAY)
             # cv2.imshow('camera', gray)
 
@@ -166,15 +170,13 @@ class DatasetGenerator:
                 cv2.line(rgb_img,(cols-1,righty),(0,lefty),(255,255,0),2)
 
 
-            depth_img=np.squeeze(self.cam_data.get_depth(depth))
             res = np.hstack((gray, fgMask, blur, mask, mask_img))
             # nn_res = np.hstack((q_img, ang_img, width_img))
 
-            cv2.imshow('Result', res)
-            cv2.imshow('q_img', q_img)
-            cv2.imshow('ang_img', ang_img)
-            cv2.imshow('width_img', width_img)
-            cv2.waitKey(30)
+            # cv2.imshow('Result', res)
+            # cv2.imshow('q_img', q_img)
+            # cv2.imshow('ang_img', ang_img)
+            # cv2.imshow('width_img', width_img)
             
             grasps = detect_grasps(q_img, ang_img, width_img, mask_img, no_grasps=10)
             grasps_list = []
@@ -188,11 +190,16 @@ class DatasetGenerator:
             grasps_array = np.asarray(grasps_list)
             cv2.imshow('camera', rgb_img)
             
+            cv2.imshow('depth', depth_to_save)
+            # cv2.imshow('depth_img', depth_img)
+            # cv2.imshow('depth', cv2.applyColorMap(depth, COLORMAP_JET))
+            # cv2.imshow('depth_img', cv2.applyColorMap(depth_img, COLORMAP_JET))
+            
             # if self.fig:
             #     plot_grasp(fig=self.fig, rgb_img=rgb_img,grasp_q_img=q_img, grasps=grasps, no_grasps=10, mask_img=mask_img)
             
 
-            keyboard = cv2.waitKey(30)
+            keyboard = cv2.waitKey(1000)
             if keyboard == 'q' or keyboard == 27:
                 break        
 
@@ -200,8 +207,8 @@ class DatasetGenerator:
 
         # saving positive grasps
         cposname = "pcd%04dcpos.txt" % self.i
-        print("self.delta", self.delta)
-        print("grasps_array", grasps_array)
+        # print("self.delta", self.delta)
+        # print("grasps_array", grasps_array)
         grasps_array = grasps_array.reshape(-1, 2) + self.delta
         np.savetxt(os.path.join(self.save_path, cposname), grasps_array, fmt="%f")
 
