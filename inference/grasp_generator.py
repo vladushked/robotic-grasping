@@ -21,13 +21,13 @@ class GraspGenerator:
                                    include_rgb=True, conveyor_speed=None):
         self.saved_model_path = saved_model_path
 
-        self.width = 640
-        self.height = 480
+        self.width = 1280
+        self.height = 720
         self.output_size = 350
         self.output_width = 300
         self.output_height = 300
-        self.top_left = (150, 200)
-        self.bottom_right = (330, 640)
+        self.top_left = (350, 280)
+        self.bottom_right = (630, 660)
         self.grip_height = 0.5
         self.conveyor_speed = conveyor_speed
 

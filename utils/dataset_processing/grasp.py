@@ -433,7 +433,7 @@ def detect_grasps(q_img, ang_img, width_img=None, mask=None, no_grasps=1):
     grasps = []
     for grasp_point_array in local_max:
         grasp_point = tuple(grasp_point_array)
-        if mask[grasp_point] == 0:
+        if mask is not None and mask[grasp_point] == 0:
             continue
 
         grasp_angle = ang_img[grasp_point]

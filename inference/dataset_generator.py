@@ -173,8 +173,9 @@ class DatasetGenerator:
             res = np.hstack((gray, fgMask, blur, mask, mask_img))
             # nn_res = np.hstack((q_img, ang_img, width_img))
 
-            cv2.imshow('Result', res)
-            cv2.imshow('q_img', q_img)
+            cv2.imshow('Mask', mask_img)
+            # cv2.imshow('Result', res)
+            # cv2.imshow('q_img', q_img)
             # cv2.imshow('ang_img', ang_img)
             # cv2.imshow('width_img', width_img)
             

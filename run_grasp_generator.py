@@ -5,10 +5,10 @@ if __name__ == '__main__':
         cam_id=830112070066,
         saved_model_path='trained-models/cornell-randsplit-rgbd-grconvnet3-drop1-ch32/epoch_19_iou_0.98',
         visualize=True,
-        enable_arm=False,
+        enable_arm=True,
         include_depth=True,
         include_rgb=True,
-        conveyor_speed=0.1,
+        conveyor_speed=None,
     )
     generator.load_model()
     generator.run()
