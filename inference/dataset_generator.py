@@ -173,8 +173,8 @@ class DatasetGenerator:
             res = np.hstack((gray, fgMask, blur, mask, mask_img))
             # nn_res = np.hstack((q_img, ang_img, width_img))
 
-            cv2.imshow('Result', res)
-            cv2.imshow('q_img', q_img)
+            cv2.imshow('mask_img', mask_img)
+            # cv2.imshow('q_img', q_img)
             # cv2.imshow('ang_img', ang_img)
             # cv2.imshow('width_img', width_img)
             
@@ -190,7 +190,7 @@ class DatasetGenerator:
             grasps_array = np.asarray(grasps_list)
             cv2.imshow('camera', rgb_img)
             
-            cv2.imshow('depth', depth_to_save)
+            # cv2.imshow('depth', depth_to_save)
             # cv2.imshow('depth_img', depth_img)
             # cv2.imshow('depth', cv2.applyColorMap(depth, COLORMAP_JET))
             # cv2.imshow('depth_img', cv2.applyColorMap(depth_img, COLORMAP_JET))
